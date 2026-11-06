@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>GVL · Sonido, iluminación y DJ para eventos en Rosario</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300&amp;display=swap" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background-color:#0E0E10;background-image:radial-gradient(1200px 1000px at 95% 12%,rgba(224,128,60,0.16),rgba(224,128,60,0) 70%),radial-gradient(1000px 1100px at 2% 26%,rgba(214,167,122,0.10),rgba(214,167,122,0) 70%),radial-gradient(1300px 1100px at 55% 42%,rgba(200,120,70,0.12),rgba(200,120,70,0) 70%),radial-gradient(1100px 1000px at 98% 60%,rgba(224,140,80,0.12),rgba(224,140,80,0) 70%),radial-gradient(1100px 1000px at 4% 76%,rgba(214,167,122,0.09),rgba(214,167,122,0) 70%),radial-gradient(1300px 900px at 50% 96%,rgba(200,110,60,0.10),rgba(200,110,60,0) 70%),linear-gradient(to bottom,#120E0C 0%,#110E0D 35%,#0F0D0D 70%,#0C0B0C 100%);background-repeat:no-repeat;color:#F2EFEA;font-family:'Unbounded',system-ui,sans-serif;font-weight:200;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+*{box-sizing:border-box}
+a{color:#D6A77A;text-decoration:none}
+a:hover{color:#E4BD95}
+img{display:block;max-width:100%}
+:focus-visible{outline:1.5px solid #D6A77A;outline-offset:3px;border-radius:6px}
+input::placeholder{color:#7D7A76}
+button,select,input{font-family:inherit}
+@keyframes gvlWave{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}
+@keyframes gvlZoom{0%{transform:scale(1)}100%{transform:scale(1.06)}}
+@keyframes gvlMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes gvlPop{0%{transform:scale(1.5);opacity:.3}100%{transform:scale(1);opacity:1}}
+@keyframes gvlCue{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}
+@keyframes gvlSpin{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes gvlRing{0%{transform:scale(1);opacity:.55}100%{transform:scale(1.7);opacity:0}}
+@keyframes gvlBlock{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+@keyframes gvlBreath{0%{opacity:.45;transform:scale(1)}100%{opacity:1;transform:scale(1.12)}}
+@keyframes gvlDraw{0%{stroke-dashoffset:1}100%{stroke-dashoffset:0}}
+@keyframes gvlSolidIn{0%{opacity:0;transform:translateY(10px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes gvlFadeIn{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+@media (pointer: fine){html.gvl-cursor, html.gvl-cursor *{cursor:none!important}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<div ref="{{ curRingRef }}" aria-hidden="true" style="position:fixed;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:1px solid rgba(214,167,122,0.7);pointer-events:none;z-index:9999;opacity:0;transition:width .25s, height .25s, margin .25s, background .25s, opacity .3s, border-color .25s"></div>
+<div ref="{{ curDotRef }}" aria-hidden="true" style="position:fixed;left:0;top:0;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#D6A77A;pointer-events:none;z-index:10000;opacity:0;transition:opacity .3s"></div>
+<div ref="{{ progressRef }}" aria-hidden="true" style="position:fixed;top:0;left:0;height:2px;width:0;background:#D6A77A;z-index:70"></div>
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:50;background:{{ navBg }};backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid {{ navBorder }};transition:background .4s, border-color .4s">
+  <nav aria-label="Principal" style="max-width:1240px;margin:0 auto;height:72px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <a href="#inicio" aria-label="GVL, ir al inicio" style="display:flex;align-items:center;transition:opacity .25s" style-hover="opacity:0.75">
+      <img src="assets/web/logo-gvl-blanco.png" alt="GVL" style="height:34px;width:auto">
+    </a>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:30px">
+        
+        <a href="#servicios" style="position:relative;padding:6px 0;color:{{ nav.servicios.color }};font-size:15px;font-weight:200;letter-spacing:0.03em;transition:color .25s" style-hover="color:#F2EFEA">Servicios<span aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:#D6A77A;transform-origin:left;transform:scaleX({{ nav.servicios.line }});transition:transform .35s"></span></a>
+        <a href="#pack" style="position:relative;padding:6px 0;color:{{ nav.pack.color }};font-size:15px;font-weight:200;letter-spacing:0.03em;transition:color .25s" style-hover="color:#F2EFEA">Armá tu pack<span aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:#D6A77A;transform-origin:left;transform:scaleX({{ nav.pack.line }});transition:transform .35s"></span></a>
+        <a href="#como-funciona" style="position:relative;padding:6px 0;color:{{ nav.comoFunciona.color }};font-size:15px;font-weight:200;letter-spacing:0.03em;transition:color .25s" style-hover="color:#F2EFEA">Cómo funciona<span aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:#D6A77A;transform-origin:left;transform:scaleX({{ nav.comoFunciona.line }});transition:transform .35s"></span></a>
+        <a href="#preguntas" style="position:relative;padding:6px 0;color:{{ nav.preguntas.color }};font-size:15px;font-weight:200;letter-spacing:0.03em;transition:color .25s" style-hover="color:#F2EFEA">Preguntas<span aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:1px;background:#D6A77A;transform-origin:left;transform:scaleX({{ nav.preguntas.line }});transition:transform .35s"></span></a>
+      </div>
+      <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 22px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:15px;letter-spacing:0.03em;transition:background .25s, gap .25s" style-hover="background:#E4BD95;color:#120C08;gap:14px" style-active="transform:scale(0.97)">Consultanos<span aria-hidden="true">→</span></a>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:15px;letter-spacing:0.03em" style-active="transform:scale(0.97)">Consultanos</a>
+        <button type="button" onClick="{{ toggleMenu }}" aria-expanded="{{ menuOpen }}" aria-controls="menu-movil" aria-label="Menú" style="width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,0.16);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer">
+          <span style="width:18px;height:1.5px;background:#F2EFEA;border-radius:2px;transition:transform .3s;transform:{{ burgerTop }}"></span>
+          <span style="width:18px;height:1.5px;background:#F2EFEA;border-radius:2px;transition:opacity .2s;opacity:{{ burgerMid }}"></span>
+          <span style="width:18px;height:1.5px;background:#F2EFEA;border-radius:2px;transition:transform .3s;transform:{{ burgerBot }}"></span>
+        </button>
+      </div>
+    </sc-if>
+  </nav>
+  <div id="menu-movil" style="display:grid;grid-template-rows:{{ menuRows }};transition:grid-template-rows .4s cubic-bezier(.2,.7,.2,1)">
+    <div style="overflow:hidden">
+      <div style="padding:4px 20px 20px;display:flex;flex-direction:column;opacity:{{ menuOpacity }};transition:opacity .3s">
+        
+        <a href="#servicios" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:19px;font-weight:200;border-bottom:1px solid rgba(255,255,255,0.07)">Servicios</a>
+        
+        <a href="#pack" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:19px;font-weight:200;border-bottom:1px solid rgba(255,255,255,0.07)">Armá tu pack</a>
+        <a href="#como-funciona" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:19px;font-weight:200;border-bottom:1px solid rgba(255,255,255,0.07)">Cómo funciona</a>
+        <a href="#asesoramiento" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:19px;font-weight:200;border-bottom:1px solid rgba(255,255,255,0.07)">No sé qué necesito</a>
+        <a href="#preguntas" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:19px;font-weight:200">Preguntas</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="inicio" data-screen-label="01 Hero" onMouseMove="{{ heroMove }}" onMouseLeave="{{ heroLeave }}" onPointerDown="{{ heroTap }}" style="position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:120px 20px 140px;overflow:hidden;text-align:center">
+    <div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden">{{ heroBg }}</div>
+    <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(14,14,16,0.42) 0%,rgba(14,14,16,0.5) 75%),linear-gradient(to bottom,rgba(14,14,16,0.5) 0%,rgba(14,14,16,0) 22%,rgba(14,14,16,0) 75%,#0E0E10 100%)"></div>
+    <div ref="{{ eqRef }}" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:52%;display:flex;align-items:flex-end;gap:5px;padding:0 5px;pointer-events:none;-webkit-mask-image:linear-gradient(to top,#000 30%,transparent);mask-image:linear-gradient(to top,#000 30%,transparent)"></div>
+    <div ref="{{ rippleRef }}" aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;overflow:hidden"></div>
+    <div ref="{{ heroContentRef }}" style="position:relative;max-width:960px;display:flex;flex-direction:column;align-items:center;gap:28px">
+      <h1 data-reveal="" style="margin:0;font-family:'Unbounded',sans-serif;font-size:clamp(2.2rem,6.4vw,5rem);line-height:1.04;letter-spacing:-0.01em;text-wrap:balance;font-weight:300;text-transform:uppercase">Sonido, luces y DJ para tu evento</h1>
+      <p data-reveal="" style="margin:0;font-size:clamp(1.0625rem,1.8vw,1.3rem);color:#E4E0DA;font-weight:200">Armado y probado un día antes.</p>
+      <div data-reveal="" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:6px">
+        <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 30px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:17px;letter-spacing:0.03em;transition:background .25s, gap .25s, box-shadow .25s" style-hover="background:#E4BD95;color:#120C08;gap:16px;box-shadow:0 10px 40px rgba(214,167,122,0.35)" style-active="transform:scale(0.97)">Consultanos<span aria-hidden="true">→</span></a>
+        <a href="#pack" style="display:inline-flex;align-items:center;justify-content:center;min-height:56px;padding:0 30px;border-radius:999px;border:1px solid rgba(242,239,234,0.4);color:#F2EFEA;font-weight:200;font-size:17px;letter-spacing:0.03em;background:rgba(14,14,16,0.35);transition:background .25s, border-color .25s" style-hover="background:rgba(242,239,234,0.1);color:#F2EFEA" style-active="transform:scale(0.97)">Armá tu pack</a>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="servicios" data-screen-label="02 Servicios" style="scroll-margin-top:72px;padding:clamp(80px,11vw,140px) 20px">
+    <div style="max-width:1240px;margin:0 auto">
+      <div style="max-width:760px;margin-bottom:clamp(40px,5vw,64px)">
+        <p data-reveal="" style="margin:0 0 18px;display:flex;align-items:center;gap:14px;font-size:13px;font-weight:200;letter-spacing:0.32em;color:#D6A77A"><span aria-hidden="true" style="width:28px;height:1px;background:#D6A77A"></span>SERVICIOS</p>
+        <h2 data-reveal="" style="margin:0;font-family:'Unbounded',sans-serif;font-size:clamp(1.9rem,4.2vw,3.2rem);line-height:1.08;letter-spacing:-0.01em;text-wrap:balance;font-weight:300;text-transform:uppercase">Contratá todo junto o solo lo que necesitás</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#151518;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden;transition:transform .5s cubic-bezier(.3,1.3,.45,1), border-color .4s, box-shadow .5s" style-hover="transform:translateY(-10px) scale(1.03);border-color:rgba(214,167,122,0.45);box-shadow:0 34px 80px rgba(0,0,0,0.6), 0 0 50px rgba(214,167,122,0.14)">
+          <div style="position:relative;height:clamp(250px,34vh,310px);overflow:hidden;background:#0B0B0D;display:flex;align-items:center;justify-content:center;padding:14px 0">
+            <img src="assets/servicio-dj.png" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;filter:blur(22px) brightness(0.45) saturate(1.2)">
+            <img src="assets/servicio-dj.png" alt="DJ con auriculares frente a sus bandejas" loading="lazy" style="position:relative;height:100%;width:auto;max-width:100%;object-fit:contain;border-radius:8px;box-shadow:0 12px 36px rgba(0,0,0,0.55);transition:transform .6s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.04)">
+          </div>
+          <div style="padding:24px 26px 26px;display:flex;flex-direction:column;gap:10px;flex:1">
+            <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:300;text-transform:uppercase">DJ profesional</h3>
+            <p style="margin:0;color:#CFCBC5;font-size:16px;line-height:1.55">Música armada con vos, leyendo la pista durante toda la noche.</p>
+            <ul style="list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;flex:1;border-bottom:1px solid rgba(255,255,255,0.08)">
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Lo que no puede faltar</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Lo que preferís evitar</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Una pista que no se vacía</li>
+            </ul>
+            <a href="{{ waDJ }}" target="_blank" rel="noopener" style="margin-top:14px;display:inline-flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 22px;font-size:15px;border-radius:999px;border:1px solid rgba(214,167,122,0.5);color:#F2EFEA;font-weight:200;letter-spacing:0.02em;transition:background .3s, color .3s, border-color .3s, padding .3s" style-hover="background:#D6A77A;color:#120C08;padding:0 18px 0 26px" style-active="transform:scale(0.98)">Consultar<span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#151518;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden;transition:transform .5s cubic-bezier(.3,1.3,.45,1), border-color .4s, box-shadow .5s" style-hover="transform:translateY(-10px) scale(1.03);border-color:rgba(214,167,122,0.45);box-shadow:0 34px 80px rgba(0,0,0,0.6), 0 0 50px rgba(214,167,122,0.14)">
+          <div style="position:relative;height:clamp(250px,34vh,310px);overflow:hidden;background:#0B0B0D;display:flex;align-items:center;justify-content:center;padding:14px 0">
+            <img src="assets/servicio-luces.png" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;filter:blur(22px) brightness(0.45) saturate(1.2)">
+            <img src="assets/servicio-luces.png" alt="Haces de luz cruzando un escenario sobre el público" loading="lazy" style="position:relative;height:100%;width:auto;max-width:100%;object-fit:contain;border-radius:8px;box-shadow:0 12px 36px rgba(0,0,0,0.55);transition:transform .6s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.04)">
+          </div>
+          <div style="padding:24px 26px 26px;display:flex;flex-direction:column;gap:10px;flex:1">
+            <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:300;text-transform:uppercase">Equipo de luces</h3>
+            <p style="margin:0;color:#CFCBC5;font-size:16px;line-height:1.55">Para que la pista se vea tan bien como suena.</p>
+            <ul style="list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;flex:1;border-bottom:1px solid rgba(255,255,255,0.08)">
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Cabezas móviles</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Láser</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Máquina de humo</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Luces de ambiente</li>
+            </ul>
+            <a href="{{ waLuces }}" target="_blank" rel="noopener" style="margin-top:14px;display:inline-flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 22px;font-size:15px;border-radius:999px;border:1px solid rgba(214,167,122,0.5);color:#F2EFEA;font-weight:200;letter-spacing:0.02em;transition:background .3s, color .3s, border-color .3s, padding .3s" style-hover="background:#D6A77A;color:#120C08;padding:0 18px 0 26px" style-active="transform:scale(0.98)">Consultar<span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#151518;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden;transition:transform .5s cubic-bezier(.3,1.3,.45,1), border-color .4s, box-shadow .5s" style-hover="transform:translateY(-10px) scale(1.03);border-color:rgba(214,167,122,0.45);box-shadow:0 34px 80px rgba(0,0,0,0.6), 0 0 50px rgba(214,167,122,0.14)">
+          <div style="position:relative;height:clamp(250px,34vh,310px);overflow:hidden;background:#0B0B0D;display:flex;align-items:center;justify-content:center;padding:14px 0">
+            <img src="assets/servicio-sonido.png" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;filter:blur(22px) brightness(0.45) saturate(1.2)">
+            <img src="assets/servicio-sonido.png" alt="Dos chicos tapándose los oídos frente a una pared de parlantes" loading="lazy" style="position:relative;height:100%;width:auto;max-width:100%;object-fit:contain;border-radius:8px;box-shadow:0 12px 36px rgba(0,0,0,0.55);transition:transform .6s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.04)">
+          </div>
+          <div style="padding:24px 26px 26px;display:flex;flex-direction:column;gap:10px;flex:1">
+            <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:300;text-transform:uppercase">Equipo de sonido</h3>
+            <p style="margin:0;color:#CFCBC5;font-size:16px;line-height:1.55">Para que se escuche con claridad en todo el salón. Ideal si ya tenés tu música o tu DJ.</p>
+            <ul style="list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;flex:1;border-bottom:1px solid rgba(255,255,255,0.08)">
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Torres de sonido</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Parlantes</li>
+              <li style="font-size:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.08);color:#E4E0DA">Subwoofers</li>
+            </ul>
+            <a href="{{ waSonido }}" target="_blank" rel="noopener" style="margin-top:14px;display:inline-flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 22px;font-size:15px;border-radius:999px;border:1px solid rgba(214,167,122,0.5);color:#F2EFEA;font-weight:200;letter-spacing:0.02em;transition:background .3s, color .3s, border-color .3s, padding .3s" style-hover="background:#D6A77A;color:#120C08;padding:0 18px 0 26px" style-active="transform:scale(0.98)">Consultar<span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+      </div>
+        </div>
+  </section>
+
+  <section id="pack" data-screen-label="03 Armá tu pack" style="scroll-margin-top:72px;padding:0 12px clamp(80px,11vw,140px)">
+    <div ref="{{ packBoxRef }}" style="position:relative;max-width:1260px;margin:0 auto;background:#131316;border-radius:28px;padding:clamp(28px,5vw,64px) clamp(16px,4vw,56px)">
+      <canvas ref="{{ packWaveRef }}" aria-hidden="true" style="position:absolute;left:-14px;top:-14px;width:calc(100% + 28px);height:calc(100% + 28px);pointer-events:none;z-index:1"></canvas>
+      <div aria-hidden="true" style="position:absolute;inset:0;border-radius:28px;overflow:hidden;pointer-events:none">
+      <div style="position:absolute;top:-260px;left:50%;transform:translateX(-50%);width:900px;height:520px;border-radius:50%;background:radial-gradient(closest-side,rgba(214,167,122,0.16),rgba(214,167,122,0))"></div></div>
+      <div style="position:relative;max-width:760px;margin-bottom:clamp(32px,4vw,48px)">
+        <p data-reveal="" style="margin:0 0 18px;display:flex;align-items:center;gap:14px;font-size:13px;font-weight:200;letter-spacing:0.32em;color:#D6A77A"><span aria-hidden="true" style="width:28px;height:1px;background:#D6A77A"></span>ARMÁ TU PACK</p>
+        <h2 data-reveal="" style="margin:0 0 16px;font-family:'Unbounded',sans-serif;font-size:clamp(1.9rem,4.2vw,3.2rem);line-height:1.08;letter-spacing:-0.01em;text-wrap:balance;font-weight:300;text-transform:uppercase">Armá tu pack y recibí tu presupuesto</h2>
+        <p data-reveal="" style="margin:0;color:#CFCBC5;font-size:1.0625rem">Seleccioná lo que necesitás y te respondemos con disponibilidad y presupuesto.</p>
+      </div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+        <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+          <fieldset data-reveal="" style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:8px 20px 12px;background:#18181C;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-weight:200;font-size:13px;letter-spacing:0.28em;color:#D6A77A">SONIDO</legend>
+            <sc-for list="{{ soundItems }}" as="item" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:70px;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <span style="font-size:17px;font-weight:200;transition:color .3s;color:{{ item.labelColor }}">{{ item.label }}</span>
+                <div style="display:flex;align-items:center;gap:6px" role="group" aria-label="{{ item.label }}">
+                  <button type="button" onClick="{{ item.dec }}" disabled="{{ item.decDisabled }}" aria-label="{{ item.decAria }}" style="width:48px;height:48px;border:0;background:transparent;color:#F2EFEA;font-size:30px;font-weight:200;line-height:1;cursor:pointer;font-family:ui-monospace,Menlo,monospace;transition:transform .25s, opacity .2s, color .2s;opacity:{{ item.decOpacity }}" style-hover="color:#D6A77A;transform:scaleX(1.5)" style-active="transform:scale(0.85)">−</button>
+                  <output aria-live="polite" style="width:40px;text-align:center;font-weight:200;font-size:20px;color:{{ item.countColor }}">{{ item.countEl }}</output>
+                  <button type="button" onClick="{{ item.inc }}" disabled="{{ item.incDisabled }}" aria-label="{{ item.incAria }}" style="width:48px;height:48px;border:0;background:transparent;color:#D6A77A;font-size:30px;font-weight:200;line-height:1;cursor:pointer;font-family:ui-monospace,Menlo,monospace;transition:transform .3s, opacity .2s;opacity:{{ item.incOpacity }}" style-hover="transform:rotate(90deg)" style-active="transform:rotate(90deg) scale(0.85)">+</button>
+                </div>
+              </div>
+            </sc-for>
+          </fieldset>
+          <fieldset data-reveal="" style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:8px 20px 12px;background:#18181C;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-weight:200;font-size:13px;letter-spacing:0.28em;color:#D6A77A">LUCES</legend>
+            <sc-for list="{{ lightItems }}" as="item" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:70px;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <span style="font-size:17px;font-weight:200;transition:color .3s;color:{{ item.labelColor }}">{{ item.label }}</span>
+                <div style="display:flex;align-items:center;gap:6px" role="group" aria-label="{{ item.label }}">
+                  <button type="button" onClick="{{ item.dec }}" disabled="{{ item.decDisabled }}" aria-label="{{ item.decAria }}" style="width:48px;height:48px;border:0;background:transparent;color:#F2EFEA;font-size:30px;font-weight:200;line-height:1;cursor:pointer;font-family:ui-monospace,Menlo,monospace;transition:transform .25s, opacity .2s, color .2s;opacity:{{ item.decOpacity }}" style-hover="color:#D6A77A;transform:scaleX(1.5)" style-active="transform:scale(0.85)">−</button>
+                  <output aria-live="polite" style="width:40px;text-align:center;font-weight:200;font-size:20px;color:{{ item.countColor }}">{{ item.countEl }}</output>
+                  <button type="button" onClick="{{ item.inc }}" disabled="{{ item.incDisabled }}" aria-label="{{ item.incAria }}" style="width:48px;height:48px;border:0;background:transparent;color:#D6A77A;font-size:30px;font-weight:200;line-height:1;cursor:pointer;font-family:ui-monospace,Menlo,monospace;transition:transform .3s, opacity .2s;opacity:{{ item.incOpacity }}" style-hover="transform:rotate(90deg)" style-active="transform:rotate(90deg) scale(0.85)">+</button>
+                </div>
+              </div>
+            </sc-for>
+          </fieldset>
+          <fieldset data-reveal="" style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:8px 20px 16px;background:#18181C;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-weight:200;font-size:13px;letter-spacing:0.28em;color:#D6A77A">DJ</legend>
+            <button type="button" role="switch" aria-checked="{{ dj }}" onClick="{{ toggleDJ }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:62px;background:transparent;border:0;color:#F2EFEA;cursor:pointer;padding:0;text-align:left">
+              <span style="display:flex;flex-direction:column">
+                <span style="font-size:17px;font-weight:200">Sumar DJ profesional</span>
+                <span style="font-size:15px;color:#A7A4A0;font-weight:200">Música armada con vos para toda la noche</span>
+              </span>
+              <span aria-hidden="true" style="flex:none;position:relative;width:56px;height:32px;border-radius:999px;background:{{ djTrack }};border:1px solid rgba(255,255,255,0.16);transition:background .3s">
+                <span style="position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:{{ djKnob }};transform:translateX({{ djKnobX }}px);transition:transform .35s cubic-bezier(.3,1.4,.5,1), background .3s"></span>
+              </span>
+            </button>
+          </fieldset>
+          <fieldset data-reveal="" style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:12px 20px 20px;background:#18181C;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-weight:200;font-size:13px;letter-spacing:0.28em;color:#D6A77A">TU EVENTO <span style="color:#A7A4A0;letter-spacing:0.06em">(opcional)</span></legend>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Tipo de evento
+                <select value="{{ tipo }}" onChange="{{ setTipo }}" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.16);background:#212126;color:#F2EFEA;font-size:16px;font-weight:200;color-scheme:dark;transition:border-color .25s" >
+                  <option value="">Elegí una opción</option>
+                  <option value="Cumpleaños de 15">Cumpleaños de 15</option>
+                  <option value="Casamiento">Casamiento</option>
+                  <option value="Evento privado">Evento privado</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Fecha
+                <input type="date" value="{{ fecha }}" onChange="{{ setFecha }}" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.16);background:#212126;color:#F2EFEA;font-size:16px;font-weight:200;color-scheme:dark;transition:border-color .25s" >
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Lugar o salón
+                <input type="text" value="{{ lugar }}" onChange="{{ setLugar }}" placeholder="Ej: Salón del Parque" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.16);background:#212126;color:#F2EFEA;font-size:16px;font-weight:200;transition:border-color .25s" >
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Cantidad de invitados
+                <input type="number" inputmode="numeric" min="1" value="{{ invitados }}" onChange="{{ setInvitados }}" placeholder="Ej: 150" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.16);background:#212126;color:#F2EFEA;font-size:16px;font-weight:200;transition:border-color .25s" >
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div style="flex:1 1 320px;max-width:{{ rightMax }};min-width:0;display:flex;flex-direction:column;gap:24px">
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <aside aria-label="Resumen de tu pack" style="background:#1C1C21;border:1px solid {{ summaryBorder }};border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:18px;transition:border-color .4s">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+              <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.4rem;font-weight:300;text-transform:uppercase">Tu pack</h3>
+              <span aria-live="polite" style="font-size:15px;color:#CFCBC5">{{ totalLabel }}</span>
+            </div>
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+              <p style="margin:0;color:#A7A4A0;font-size:15px;padding:22px;border:1px dashed rgba(255,255,255,0.16);border-radius:14px;text-align:center">Sumá equipos o el DJ y acá vas a ver tu pack.</p>
+            </sc-if>
+            <sc-for list="{{ summaryGroups }}" as="g" hint-placeholder-count="0">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <span style="font-size:12px;font-weight:200;letter-spacing:0.28em;color:#D6A77A">{{ g.title }}</span>
+                <sc-for list="{{ g.lines }}" as="line" hint-placeholder-count="1">
+                  {{ line }}
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ hasData }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:4px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08)">
+                <sc-for list="{{ dataLines }}" as="line" hint-placeholder-count="0">
+                  <span style="font-size:15px;color:#CFCBC5">{{ line }}</span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ packUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 20px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:16px;letter-spacing:0.02em;text-align:center;animation:gvlFadeIn .4s ease;transition:background .25s, gap .25s, box-shadow .25s" style-hover="background:#E4BD95;color:#120C08;gap:16px;box-shadow:0 10px 40px rgba(214,167,122,0.3)" style-active="transform:scale(0.98)">Enviar mi pack por WhatsApp<span aria-hidden="true">→</span></a>
+            </sc-if>
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+              <button type="button" disabled="" style="min-height:56px;padding:0 20px;border-radius:999px;background:#26262C;color:#A7A4A0;border:0;font-weight:200;font-size:15px;cursor:not-allowed">Elegí al menos un equipo o el DJ</button>
+            </sc-if>
+            <button type="button" onClick="{{ reset }}" style="align-self:center;min-height:44px;padding:0 16px;background:transparent;border:0;color:#CFCBC5;font-size:15px;font-weight:200;text-decoration:underline;text-underline-offset:4px;cursor:pointer" style-hover="color:#F2EFEA">Vaciar</button>
+          </aside>
+        </sc-if>
+        <div id="asesoramiento" data-reveal="" style="position:relative;scroll-margin-top:96px;border-radius:20px;padding:32px 26px;overflow:hidden;border:1px solid rgba(214,167,122,0.5);background:radial-gradient(120% 90% at 50% 0%,rgba(214,167,122,0.2),rgba(214,167,122,0.05) 55%,#1C1C21 100%);box-shadow:0 0 40px rgba(214,167,122,0.16)">
+          {{ adviceGlow }}
+          <div style="position:relative;display:flex;flex-direction:column;gap:14px">
+            <span style="font-size:12px;font-weight:200;letter-spacing:0.28em;color:#E4BD95">ASESORAMIENTO</span>
+            <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.5rem;line-height:1.2;text-wrap:balance;font-weight:300;text-transform:uppercase">¿No sabés lo que necesitás para tu evento?</h3>
+            <p style="margin:0;color:#ECE8E2;font-size:16px;text-wrap:pretty">Te asesoramos en la elección del equipo de sonido, la iluminación y el servicio de DJ, de acuerdo con el lugar, la cantidad de invitados y el tipo de celebración.</p>
+            <a href="{{ waAsesoria }}" target="_blank" rel="noopener" style="margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 22px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:16px;letter-spacing:0.02em;box-shadow:0 6px 20px rgba(214,167,122,0.2);transition:background .25s, gap .25s, box-shadow .25s" style-hover="background:#E4BD95;color:#120C08;gap:16px;box-shadow:0 8px 28px rgba(214,167,122,0.32)" style-active="transform:scale(0.98)">Quiero asesorarme<span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        </div>
+      </div>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;display:flex;justify-content:center;margin-top:12px">
+          <button type="button" onClick="{{ reset }}" style="min-height:44px;padding:0 16px;background:transparent;border:0;color:#CFCBC5;font-size:15px;font-weight:200;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Vaciar y empezar de nuevo</button>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section id="como-funciona" ref="{{ stepsRef }}" data-screen-label="04 Cómo funciona" style="position:relative;overflow:hidden;scroll-margin-top:72px;padding:clamp(40px,6vw,80px) 20px clamp(80px,11vw,140px)">
+    <img src="assets/onda-horizontal.png" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0.55;pointer-events:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 22%,#000 78%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 22%,#000 78%,transparent 100%)">
+    <div style="position:relative;max-width:1240px;margin:0 auto">
+      <div style="max-width:760px;margin-bottom:clamp(40px,5vw,64px)">
+        <p data-reveal="" style="margin:0 0 18px;display:flex;align-items:center;gap:14px;font-size:13px;font-weight:200;letter-spacing:0.32em;color:#D6A77A"><span aria-hidden="true" style="width:28px;height:1px;background:#D6A77A"></span>CÓMO FUNCIONA</p>
+        <h2 data-reveal="" style="margin:0;font-family:'Unbounded',sans-serif;font-size:clamp(1.9rem,4.2vw,3.2rem);line-height:1.08;letter-spacing:-0.01em;text-wrap:balance;font-weight:300;text-transform:uppercase">De tu consulta a la pista, en cinco pasos</h2>
+      </div>
+      <div style="position:relative">
+        <div aria-hidden="true" style="position:absolute;background:rgba(255,255,255,0.1);left:{{ trackLeft }};top:{{ trackTop }};width:{{ trackW }};height:{{ trackH }}"></div>
+        <div ref="{{ fillRef }}" aria-hidden="true" style="position:absolute;background:#D6A77A;left:{{ trackLeft }};top:{{ trackTop }};width:{{ fillW0 }};height:{{ fillH0 }};transition:width .15s linear, height .15s linear"></div>
+        <ol style="position:relative;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:{{ stepCols }};gap:{{ stepGap }}">
+          <sc-for list="{{ steps }}" as="st" hint-placeholder-count="5">
+            <li onMouseEnter="{{ st.onEnter }}" style="display:flex;flex-direction:{{ st.dir }};gap:18px">
+              <span aria-hidden="true" style="flex:none;width:44px;height:44px;display:flex;align-items:center;justify-content:center"><span style="width:12px;height:12px;border-radius:50%;border:1px solid {{ st.ring }};background:{{ st.bg }};transition:background .4s, border-color .4s, transform .4s;transform:scale({{ st.scale }})"></span></span>
+              <div style="display:flex;flex-direction:column;gap:20px;min-width:0;max-width:320px">
+                <div role="img" aria-label="Paso {{ st.n }}" style="display:flex;align-items:flex-end;min-height:{{ digitH }}">{{ st.digit }}</div>
+                <div style="display:flex;flex-direction:column;gap:8px;opacity:{{ st.descOpacity }};transform:translateY({{ st.descY }});transition:opacity .6s ease {{ st.descDelay }}, transform .6s ease {{ st.descDelay }}">
+                  <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-size:1.2rem;line-height:1.3;font-weight:300;text-transform:uppercase">{{ st.t }}</h3>
+                  <p style="margin:0;color:#CFCBC5;font-size:16px">{{ st.d }}</p>
+                </div>
+              </div>
+            </li>
+          </sc-for>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="preguntas" data-screen-label="08 Preguntas" style="scroll-margin-top:72px;padding:clamp(40px,6vw,80px) 20px clamp(80px,11vw,140px)">
+    <div style="max-width:860px;margin:0 auto">
+      <div style="margin-bottom:clamp(32px,4vw,48px)">
+        <p data-reveal="" style="margin:0 0 18px;display:flex;align-items:center;gap:14px;font-size:13px;font-weight:200;letter-spacing:0.32em;color:#D6A77A"><span aria-hidden="true" style="width:28px;height:1px;background:#D6A77A"></span>PREGUNTAS</p>
+        <h2 data-reveal="" style="margin:0;font-family:'Unbounded',sans-serif;font-size:clamp(1.9rem,4.2vw,3.2rem);line-height:1.08;letter-spacing:-0.01em;font-weight:300;text-transform:uppercase">Preguntas frecuentes</h2>
+      </div>
+      <div data-reveal="" style="border-top:1px solid rgba(255,255,255,0.1)">
+        <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="6">
+          <div style="border-bottom:1px solid rgba(255,255,255,0.1)">
+            <h3 style="margin:0;font-family:'Unbounded',sans-serif;font-weight:300;text-transform:uppercase">
+              <button type="button" onClick="{{ f.toggle }}" aria-expanded="{{ f.open }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px;padding:18px 0;background:transparent;border:0;color:{{ f.color }};font-weight:200;font-size:1.2rem;text-align:left;cursor:pointer;transition:color .3s, padding .3s" style-hover="color:#E4BD95;padding-left:8px">
+                <span>{{ f.q }}</span>
+                <span aria-hidden="true" style="flex:none;width:38px;height:38px;border-radius:50%;border:1px solid rgba(214,167,122,0.5);color:{{ f.iconColor }};background:{{ f.iconBg }};display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:200;transition:transform .4s cubic-bezier(.2,.7,.2,1), background .3s, color .3s;transform:rotate({{ f.rot }}deg)">+</span>
+              </button>
+            </h3>
+            <div style="display:grid;grid-template-rows:{{ f.rows }};transition:grid-template-rows .45s cubic-bezier(.2,.7,.2,1)">
+              <div style="overflow:hidden">
+                <p style="margin:0;padding:0 56px 24px 0;color:#CFCBC5;text-wrap:pretty;opacity:{{ f.opacity }};transition:opacity .4s">{{ f.a }}</p>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="09 Llamado final" style="position:relative;padding:clamp(100px,13vw,170px) 20px;overflow:hidden;text-align:center">
+    <img src="assets/piso.jpg" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35">
+    <div aria-hidden="true" style="position:absolute;inset:0;overflow:hidden">{{ ctaGlow }}</div>
+    <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(14,14,16,0.1),#0E0E10 80%)"></div>
+    <div style="position:relative;max-width:820px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:22px">
+      <h2 data-reveal="" style="margin:0;font-family:'Unbounded',sans-serif;font-size:clamp(2.1rem,5.2vw,4rem);line-height:1.05;letter-spacing:-0.01em;text-wrap:balance;font-weight:300;text-transform:uppercase">¿Ya tenés fecha para tu evento?</h2>
+      <p data-reveal="" style="margin:0;color:#E4E0DA;font-size:clamp(1.0625rem,1.6vw,1.25rem);max-width:32em;text-wrap:pretty">Contanos qué estás organizando y te respondemos con disponibilidad y presupuesto.</p>
+      <div data-reveal="" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px">
+        <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:60px;padding:0 36px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:18px;letter-spacing:0.03em;transition:background .25s, gap .25s, box-shadow .25s" style-hover="background:#E4BD95;color:#120C08;gap:16px;box-shadow:0 10px 40px rgba(214,167,122,0.35)" style-active="transform:scale(0.97)">Consultanos<span aria-hidden="true">→</span></a>
+        <a href="#pack" style="display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 32px;border-radius:999px;border:1px solid rgba(242,239,234,0.4);color:#F2EFEA;font-weight:200;font-size:18px;letter-spacing:0.03em;background:rgba(14,14,16,0.5);transition:background .25s, border-color .25s" style-hover="background:rgba(242,239,234,0.1);color:#F2EFEA" style-active="transform:scale(0.97)">Armá tu pack</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-screen-label="10 Footer" onMouseMove="{{ footMove }}" onMouseLeave="{{ footLeave }}" style="position:relative;overflow:hidden;background:#0B0B0D;min-height:clamp(860px,120vh,1180px);display:flex;flex-direction:column">
+  <img ref="{{ footImgRef }}" src="assets/espuma-acustica.png" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;object-position:center top;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)">
+  <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%, rgba(11,11,13,0.45), rgba(11,11,13,0.8) 100%)"></div>
+  <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(to bottom,#0E0E10 0%,rgba(14,14,16,0) 22%,rgba(14,14,16,0) 62%,rgba(11,11,13,0.92) 100%)"></div>
+
+  <div style="position:relative;flex:1;width:100%;max-width:1240px;margin:0 auto;padding:clamp(120px,14vw,180px) 20px 36px;display:flex;flex-direction:column;justify-content:space-between;gap:72px">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <p data-reveal="" style="margin:0;display:flex;align-items:center;gap:14px;font-size:13px;letter-spacing:0.32em;color:#D6A77A"><span aria-hidden="true" style="width:28px;height:1px;background:#D6A77A"></span>GVL · ROSARIO</p>
+      <nav aria-label="Servicios" style="display:flex;flex-direction:column">
+        <a href="#servicios" data-reveal="" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:6px 0;border-bottom:1px solid rgba(242,239,234,0.12);font-family:'Unbounded',sans-serif;font-weight:300;text-transform:uppercase;font-size:clamp(2.6rem,11vw,9rem);line-height:1.02;letter-spacing:-0.02em;color:transparent;-webkit-text-stroke:1px rgba(242,239,234,0.55);transition:color .45s cubic-bezier(.2,.7,.2,1), padding .45s cubic-bezier(.2,.7,.2,1), -webkit-text-stroke-color .45s" style-hover="color:#F2EFEA;padding-left:clamp(12px,3vw,40px);-webkit-text-stroke:1px #F2EFEA">Sonido<span aria-hidden="true" style="font-size:0.32em;-webkit-text-stroke:0;color:#D6A77A">→</span></a>
+        <a href="#servicios" data-reveal="" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:6px 0;border-bottom:1px solid rgba(242,239,234,0.12);font-family:'Unbounded',sans-serif;font-weight:300;text-transform:uppercase;font-size:clamp(2.6rem,11vw,9rem);line-height:1.02;letter-spacing:-0.02em;color:transparent;-webkit-text-stroke:1px rgba(242,239,234,0.55);transition:color .45s cubic-bezier(.2,.7,.2,1), padding .45s cubic-bezier(.2,.7,.2,1), -webkit-text-stroke-color .45s" style-hover="color:#D6A77A;padding-left:clamp(12px,3vw,40px);-webkit-text-stroke:1px #D6A77A">Luces<span aria-hidden="true" style="font-size:0.32em;-webkit-text-stroke:0;color:#D6A77A">→</span></a>
+        <a href="#servicios" data-reveal="" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:6px 0;border-bottom:1px solid rgba(242,239,234,0.12);font-family:'Unbounded',sans-serif;font-weight:300;text-transform:uppercase;font-size:clamp(2.6rem,11vw,9rem);line-height:1.02;letter-spacing:-0.02em;color:transparent;-webkit-text-stroke:1px rgba(242,239,234,0.55);transition:color .45s cubic-bezier(.2,.7,.2,1), padding .45s cubic-bezier(.2,.7,.2,1), -webkit-text-stroke-color .45s" style-hover="color:#F2EFEA;padding-left:clamp(12px,3vw,40px);-webkit-text-stroke:1px #F2EFEA">DJ<span aria-hidden="true" style="font-size:0.32em;-webkit-text-stroke:0;color:#D6A77A">→</span></a>
+      </nav>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:40px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:36px 28px;align-items:end">
+        <div data-reveal="" style="display:flex;flex-direction:column;gap:18px">
+          <img src="assets/web/logo-gvl-blanco.png" alt="GVL" style="height:46px;width:auto;align-self:flex-start">
+          <span style="color:#CFCBC5;font-size:15px;max-width:22em;text-wrap:pretty">DJ, sonido e iluminación para eventos en Rosario.</span>
+        </div>
+        <nav data-reveal="" aria-label="Secciones" style="display:flex;flex-direction:column;gap:2px;font-size:15px;letter-spacing:0.03em">
+          <a href="#pack" style="display:inline-flex;align-items:center;gap:10px;min-height:40px;color:#CFCBC5;transition:color .25s, gap .3s" style-hover="color:#F2EFEA;gap:18px"><span aria-hidden="true" style="width:14px;height:1px;background:#D6A77A"></span>Armá tu pack</a>
+          <a href="#como-funciona" style="display:inline-flex;align-items:center;gap:10px;min-height:40px;color:#CFCBC5;transition:color .25s, gap .3s" style-hover="color:#F2EFEA;gap:18px"><span aria-hidden="true" style="width:14px;height:1px;background:#D6A77A"></span>Cómo funciona</a>
+          <a href="#preguntas" style="display:inline-flex;align-items:center;gap:10px;min-height:40px;color:#CFCBC5;transition:color .25s, gap .3s" style-hover="color:#F2EFEA;gap:18px"><span aria-hidden="true" style="width:14px;height:1px;background:#D6A77A"></span>Preguntas</a>
+        </nav>
+        <div data-reveal="" style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;letter-spacing:0.28em;color:#D6A77A">WHATSAPP</span>
+          <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:14px;align-self:flex-start;min-height:56px;padding:0 26px;border-radius:999px;border:1px solid rgba(214,167,122,0.5);background:rgba(11,11,13,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#F2EFEA;font-family:'Unbounded',sans-serif;font-weight:300;font-size:clamp(1rem,1.6vw,1.2rem);letter-spacing:0.02em;transition:background .3s, color .3s, gap .3s, box-shadow .3s" style-hover="background:#D6A77A;color:#120C08;gap:20px;box-shadow:0 10px 40px rgba(214,167,122,0.35)" style-active="transform:scale(0.97)">341 339-2546<span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding-top:22px;border-top:1px solid rgba(242,239,234,0.12);font-size:13px;color:#A7A4A0;letter-spacing:0.04em">
+        <span>© 2026 GVL · Rosario, Santa Fe</span>
+        <a href="#inicio" style="display:inline-flex;align-items:center;gap:12px;min-height:44px;color:#CFCBC5;transition:color .25s" style-hover="color:#F2EFEA">Volver arriba<span aria-hidden="true" style="width:44px;height:44px;border-radius:50%;border:1px solid rgba(214,167,122,0.5);display:flex;align-items:center;justify-content:center;color:#D6A77A;font-size:16px;transition:transform .35s cubic-bezier(.2,.7,.2,1)" style-hover="transform:translateY(-4px)">↑</span></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<div role="region" aria-label="Resumen de tu pack" style="position:fixed;left:0;right:0;bottom:0;z-index:55;background:rgba(21,21,24,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(214,167,122,0.3);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;transform:translateY({{ barY }});visibility:{{ barVis }};transition:transform .45s cubic-bezier(.2,.7,.2,1), visibility .45s">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:28px">
+    <span aria-live="polite" style="font-size:15px;color:#E4E0DA;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ barLabel }}</span>
+    <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+      <button type="button" onClick="{{ reset }}" style="flex:none;min-height:36px;padding:0 6px;background:transparent;border:0;color:#CFCBC5;font-size:15px;font-weight:200;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Vaciar</button>
+    </sc-if>
+  </div>
+  <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+    <a href="{{ packUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;border-radius:999px;background:#D6A77A;color:#120C08;font-weight:200;font-size:16px;animation:gvlFadeIn .35s ease" style-active="transform:scale(0.98)">Enviar mi pack por WhatsApp<span aria-hidden="true">→</span></a>
+  </sc-if>
+  <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+    <button type="button" disabled="" style="min-height:52px;border-radius:999px;background:#26262C;color:#A7A4A0;border:0;font-weight:200;font-size:15px">Elegí al menos un equipo o el DJ</button>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;maxPerItem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:10,&quot;min&quot;:1,&quot;max&quot;:30,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Armador&quot;},&quot;animations&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Movimiento&quot;}}">
+const WA = 'https://wa.me/5493413392546?text=';
+const DATA = '\n\nTipo de evento:\nFecha:\nLugar o salón:\nCantidad de invitados:';
+const wa = m => WA + encodeURIComponent(m);
+const ITEMS = [
+  { id: 'torres', g: 's', label: 'Torres de sonido', one: 'torre de sonido', many: 'torres de sonido' },
+  { id: 'parlantes', g: 's', label: 'Parlantes', one: 'parlante', many: 'parlantes' },
+  { id: 'subs', g: 's', label: 'Subwoofers', one: 'subwoofer', many: 'subwoofers' },
+  { id: 'cabezas', g: 'l', label: 'Cabezas móviles', one: 'cabeza móvil', many: 'cabezas móviles' },
+  { id: 'laser', g: 'l', label: 'Láser', one: 'láser', many: 'láseres' },
+  { id: 'humo', g: 'l', label: 'Máquina de humo', one: 'máquina de humo', many: 'máquinas de humo' },
+  { id: 'ambiente', g: 'l', label: 'Luces de ambiente', one: 'luz de ambiente', many: 'luces de ambiente' },
+];
+const EMPTY = Object.fromEntries(ITEMS.map(i => [i.id, 0]));
+const FAQS = [
+  ['¿Trabajan fuera de Rosario?', 'Por ahora trabajamos solo en Rosario.'],
+  ['¿Puedo alquilar solo el equipo, sin DJ?', 'Sí, podés alquilar sonido, luces o ambos, sin DJ.'],
+  ['¿Cuándo arman el equipo?', 'Un día antes del evento, y lo dejamos probado.'],
+  ['¿Cómo se reserva y se paga?', 'Con una seña del 25% el día de la prueba. El resto se abona el día del evento, antes de que comience.'],
+  ['¿Cuánto cuesta?', 'Depende de lo que necesites. Armá tu pack o consultanos y te enviamos el presupuesto.'],
+  ['¿Puedo pedir canciones?', 'Sí, el DJ arma la música con vos antes del evento.'],
+];
+const STEPS = [
+  { t: 'Nos escribís', d: 'Por WhatsApp, con tu evento o tu pack.', img: 'assets/web/telefono.png', alt: 'Tubo de teléfono colgando', pos: 'center', gray: 1 },
+  { t: 'Te recomendamos y cotizamos', d: 'Según tu salón y la cantidad de invitados.', img: 'assets/web/presupuesto.png', alt: 'Bandeja giradiscos con billetes', pos: 'center', gray: 1 },
+  { t: 'Reservás la fecha', d: 'Y queda agendada para tu evento.', img: 'assets/web/calendario.png', alt: 'Calendario sobre una bandeja de vinilo', pos: 'center', gray: 1 },
+  { t: 'Armamos y probamos todo un día antes', d: 'Ese día se abona la seña del 25%.', img: 'assets/parlantes.jpg', alt: 'Ilustración: parlantes', pos: 'center 40%', gray: 0 },
+  { t: 'Disfrutás tu evento', d: 'El resto se abona ese día, antes de comenzar.', img: 'assets/brillo.jpg', alt: 'Ilustración: haz de luz naranja', pos: 'center 50%', gray: 0 },
+];
+const SECTIONS = [['servicios', 'servicios'], ['pack', 'pack'], ['como-funciona', 'comoFunciona'], ['preguntas', 'preguntas']];
+const BARS = Array.from({ length: 64 }, (_, i) => {
+  const t = i / 63, env = Math.sin(Math.PI * t);
+  return Math.max(8, Math.round(100 * env * (0.4 + 0.6 * Math.abs(Math.sin(i * 0.9) * Math.cos(i * 0.37)))));
+});
+const MARQUEE = ['Armado y probado un día antes', 'Sonido, luces y DJ en un solo lugar', 'Atención personalizada', 'Eventos en Rosario'];
+const SHAPES = {
+  1: { solid: ['M46 26 H68 V112 H46 Z'], outline: ['M14 40 L40 18 L40 40 L14 62 Z', 'M28 116 H86 V130 H28 Z'] },
+  2: { solid: ['M50 16 A32 32 0 0 1 82 48 L62 48 A12 12 0 0 0 50 36 Z', 'M62 48 L82 48 L44 112 L18 112 Z'], outline: ['M10 40 A32 32 0 0 1 42 8 L42 28 A12 12 0 0 0 30 40 Z', 'M30 116 H90 V130 H30 Z'] },
+  3: { solid: ['M48 14 A28 28 0 0 1 48 70 L48 51 A9 9 0 0 0 48 33 Z', 'M48 60 A32 32 0 0 1 48 124 L48 104 A12 12 0 0 0 48 80 Z'], outline: ['M10 6 H42 V25 H10 Z', 'M8 96 A32 32 0 0 0 40 128 L40 108 A12 12 0 0 1 28 96 Z'] },
+  4: { solid: ['M58 14 H80 V90 H58 Z', 'M58 14 L76 14 L36 86 L14 86 Z'], outline: ['M8 92 H90 V110 H8 Z', 'M64 114 H86 V130 H64 Z'] },
+  5: { solid: ['M14 24 L38 24 L35 62 L30 78 L8 66 Z', 'M18 84 A34 34 0 0 1 86 84 L66 84 A14 14 0 0 0 38 84 Z'], outline: ['M38 2 H86 V23 H38 Z', 'M10 90 A34 34 0 0 0 44 124 L44 104 A14 14 0 0 1 30 90 Z'] },
+};
+const fmtDate = s => { if (!s) return ''; const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
+const h = React.createElement;
+
+class Component extends DCLogic {
+  state = {
+    counts: { ...EMPTY }, dj: false, tipo: '', fecha: '', lugar: '', invitados: '',
+    isMobile: typeof window !== 'undefined' ? window.innerWidth < 900 : false,
+    wide: typeof window !== 'undefined' ? window.innerWidth >= 1100 : true,
+    menuOpen: false, packInView: false, faq: -1, adviceOpen: false,
+    scrolled: false, active: '', lit: 0, stepsOn: false, rebuild: [0, 0, 0, 0, 0],
+  };
+  reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  progressRef = React.createRef();
+  heroBgRef = React.createRef();
+  heroContentRef = React.createRef();
+  eqRef = React.createRef();
+  packBoxRef = React.createRef();
+  packWaveRef = React.createRef();
+  setupPackWave() {
+    const box = this.packBoxRef.current, cv = this.packWaveRef.current; if (!box || !cv) return;
+    const PAD = 14, R0 = 28, STEP = 2.6;
+    let pts = [], W = 0, H = 0, dpr = 1, ctx = cv.getContext('2d');
+    const rnd = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const build = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = box.offsetWidth; H = box.offsetHeight;
+      cv.width = Math.round((W + PAD * 2) * dpr); cv.height = Math.round((H + PAD * 2) * dpr);
+      const r = Math.min(R0, W / 2, H / 2), segs = [];
+      segs.push({ l: W - 2 * r, f: d => [r + d, 0, 0, -1] });
+      segs.push({ l: Math.PI * r / 2, f: d => { const a = -Math.PI / 2 + d / r; return [W - r + r * Math.cos(a), r + r * Math.sin(a), Math.cos(a), Math.sin(a)]; } });
+      segs.push({ l: H - 2 * r, f: d => [W, r + d, 1, 0] });
+      segs.push({ l: Math.PI * r / 2, f: d => { const a = d / r; return [W - r + r * Math.cos(a), H - r + r * Math.sin(a), Math.cos(a), Math.sin(a)]; } });
+      segs.push({ l: W - 2 * r, f: d => [W - r - d, H, 0, 1] });
+      segs.push({ l: Math.PI * r / 2, f: d => { const a = Math.PI / 2 + d / r; return [r + r * Math.cos(a), H - r + r * Math.sin(a), Math.cos(a), Math.sin(a)]; } });
+      segs.push({ l: H - 2 * r, f: d => [0, H - r - d, -1, 0] });
+      segs.push({ l: Math.PI * r / 2, f: d => { const a = Math.PI + d / r; return [r + r * Math.cos(a), r + r * Math.sin(a), Math.cos(a), Math.sin(a)]; } });
+      const total = segs.reduce((a, b) => a + b.l, 0), n = Math.floor(total / STEP), step = total / n;
+      pts = [];
+      let si = 0, acc = 0;
+      for (let i = 0; i < n; i++) {
+        let d = i * step;
+        while (si < segs.length - 1 && d - acc > segs[si].l) { acc += segs[si].l; si++; }
+        pts.push(segs[si].f(Math.min(d - acc, segs[si].l)));
+      }
+    };
+    const draw = t => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W + PAD * 2, H + PAD * 2);
+      ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(226,180,134,0.58)';
+      ctx.beginPath();
+      const n = pts.length, shift = t * 0.6;
+      for (let i = 0; i < n; i++) {
+        const k = i - shift, ki = Math.floor(k), fr = k - ki;
+        const sw = 0.5 + 0.5 * Math.sin(i * 0.028 - t * 1.1), sw2 = 0.5 + 0.5 * Math.sin(i * 0.011 + t * 0.45 + 1.3);
+        const env = 0.12 + 0.88 * Math.pow(sw, 2.2) * (0.55 + 0.45 * sw2);
+        const hit = 0.45 + 0.55 * (rnd(ki) * (1 - fr) + rnd(ki + 1) * fr);
+        const a = 0.6 + env * hit * 6.5;
+        const [x, y, nx, ny] = pts[i];
+        ctx.moveTo(PAD + x - nx * a, PAD + y - ny * a);
+        ctx.lineTo(PAD + x + nx * a, PAD + y + ny * a);
+      }
+      ctx.stroke();
+    };
+    build(); draw(0);
+    this.pwRO = new ResizeObserver(() => { build(); draw(this.pwT || 0); });
+    this.pwRO.observe(box);
+    let vis = false, last = performance.now();
+    this.pwIO = new IntersectionObserver(es => { vis = es[0].isIntersecting; }, { rootMargin: '100px' });
+    this.pwIO.observe(box);
+    const loop = now => {
+      this.pwRaf = requestAnimationFrame(loop);
+      const dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (!vis || !this.motionOn()) return;
+      this.pwT = (this.pwT || 0) + dt; draw(this.pwT);
+    };
+    this.pwRaf = requestAnimationFrame(loop);
+  }
+  curDotRef = React.createRef();
+  curRingRef = React.createRef();
+  setupCursor() {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    document.documentElement.classList.add('gvl-cursor');
+    const dot = this.curDotRef.current, ring = this.curRingRef.current; if (!dot || !ring) return;
+    let x = -100, y = -100, rx = -100, ry = -100, big = false;
+    this.curMove = e => {
+      x = e.clientX; y = e.clientY;
+      dot.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+      dot.style.opacity = '1'; ring.style.opacity = '1';
+      const h = !!(e.target.closest && e.target.closest('a,button,select,input,label,[role="switch"]'));
+      if (h !== big) { big = h; ring.style.width = ring.style.height = h ? '30px' : '18px'; ring.style.margin = h ? '-15px 0 0 -15px' : '-9px 0 0 -9px'; ring.style.background = h ? 'rgba(214,167,122,0.14)' : 'transparent'; ring.style.borderColor = h ? 'rgba(214,167,122,0.9)' : 'rgba(214,167,122,0.7)'; }
+    };
+    this.curOut = () => { dot.style.opacity = '0'; ring.style.opacity = '0'; };
+    this.curDown = () => { dot.style.transform += ' scale(0.5)'; };
+    window.addEventListener('mousemove', this.curMove, { passive: true });
+    document.addEventListener('mouseleave', this.curOut);
+    window.addEventListener('mousedown', this.curDown);
+    const follow = () => {
+      this.curRaf = requestAnimationFrame(follow);
+      rx += (x - rx) * 0.2; ry += (y - ry) * 0.2;
+      ring.style.transform = 'translate(' + rx.toFixed(1) + 'px,' + ry.toFixed(1) + 'px)';
+    };
+    follow();
+  }
+  rippleRef = React.createRef();
+  motionOn() { return (this.props.animations ?? true) && !this.reduce; }
+  setupEq() {
+    const el = this.eqRef.current; if (!el) return;
+    const n = window.innerWidth < 700 ? 26 : 56;
+    if (this.bars && this.bars.length === n) return;
+    el.innerHTML = ''; this.bars = []; this.eqV = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const b = document.createElement('span');
+      b.style.cssText = 'flex:1;height:100%;border-radius:999px;background:linear-gradient(to top,rgba(214,167,122,0.75),rgba(214,167,122,0.06));transform-origin:50% 100%;transform:scaleY(0.06);will-change:transform';
+      el.appendChild(b); this.bars.push(b);
+    }
+  }
+  eqLoop = () => {
+    this.eqRaf = requestAnimationFrame(this.eqLoop);
+    if (!this.bars || window.scrollY > window.innerHeight * 1.2) return;
+    const t = performance.now() / 1000, n = this.bars.length, still = !this.motionOn();
+    this.pulses = (this.pulses || []).filter(p => t - p.t < 1.6);
+    for (let i = 0; i < n; i++) {
+      const x = (i + 0.5) / n;
+      let v = still ? 0.08 : 0.07 + 0.06 * (Math.sin(t * 2.2 + i * 0.42) + 1) / 2 + 0.03 * Math.sin(t * 5.1 + i * 1.7);
+      if (this.mx != null) v += Math.exp(-((x - this.mx) ** 2) / 0.0098) * (0.3 + 0.55 * (1 - this.my));
+      for (const p of this.pulses) { const a = t - p.t, d = Math.abs(x - p.x) - a * 0.9; v += Math.exp(-(d * d) / 0.0032) * Math.max(0, 1 - a / 1.6) * 0.95; }
+      v = Math.min(1, v);
+      this.eqV[i] += (v - this.eqV[i]) * 0.2;
+      this.bars[i].style.transform = 'scaleY(' + this.eqV[i].toFixed(3) + ')';
+    }
+  };
+  heroPulse(e) {
+    const sec = e.currentTarget, r = sec.getBoundingClientRect();
+    const px = e.clientX - r.left, py = e.clientY - r.top;
+    (this.pulses = this.pulses || []).push({ x: px / r.width, t: performance.now() / 1000 });
+    if (!this.motionOn()) return;
+    const host = this.rippleRef.current;
+    if (host) [0, 160, 320].forEach((d, k) => {
+      const c = document.createElement('span');
+      c.style.cssText = 'position:absolute;left:' + px + 'px;top:' + py + 'px;width:' + (1100 - k * 260) + 'px;height:' + (1100 - k * 260) + 'px;border-radius:50%;border:1px solid rgba(214,167,122,0.7);transform:translate(-50%,-50%) scale(0);pointer-events:none';
+      host.appendChild(c);
+      c.animate([{ transform: 'translate(-50%,-50%) scale(0)', opacity: 0.9 }, { transform: 'translate(-50%,-50%) scale(1)', opacity: 0 }], { duration: 1500, delay: d, easing: 'cubic-bezier(.15,.7,.25,1)', fill: 'both' }).onfinish = () => c.remove();
+    });
+    const c = this.heroContentRef.current;
+    if (c) c.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.035)' }, { transform: 'scale(1)' }], { duration: 420, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+  }
+  lightRef = React.createRef();
+  stepsRef = React.createRef();
+  fillRef = React.createRef();
+  footImgRef = React.createRef();
+  footShift(x, y) {
+    const el = this.footImgRef.current; if (!el) return;
+    el.style.transform = `translate(${(x * -16).toFixed(1)}px, ${(y * -16).toFixed(1)}px)`;
+  }
+
+  componentDidMount() {
+    this.onResize = () => {
+      const m = window.innerWidth < 900;
+      if (m !== this.state.isMobile) this.setState({ isMobile: m, menuOpen: false });
+      const w = window.innerWidth >= 1100;
+      if (w !== this.state.wide) this.setState({ wide: w });
+      this.setupEq();
+      this.onScroll();
+    };
+    window.addEventListener('resize', this.onResize);
+    this.setupEq(); this.eqLoop(); this.setupCursor(); this.setupPackWave();
+    this.onScroll = () => {
+      if (this.raf) return;
+      this.raf = requestAnimationFrame(() => { this.raf = null; this.tick(); });
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    const pack = document.getElementById('pack');
+    if (pack) {
+      this.packIO = new IntersectionObserver(es => this.setState({ packInView: es[0].isIntersecting }), { rootMargin: '-30% 0px -20% 0px' });
+      this.packIO.observe(pack);
+    }
+    if (this.stepsRef.current) {
+      if (this.reduce) this.setState({ stepsOn: true });
+      else {
+        this.stepsIO = new IntersectionObserver(es => { if (es[0].isIntersecting) { this.setState({ stepsOn: true }); this.stepsIO.disconnect(); } }, { threshold: 0.2 });
+        this.stepsIO.observe(this.stepsRef.current);
+      }
+    }
+    this.setupReveal();
+    this.tick();
+  }
+  componentDidUpdate() { this.setupReveal(); }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('scroll', this.onScroll);
+    cancelAnimationFrame(this.eqRaf); cancelAnimationFrame(this.curRaf); cancelAnimationFrame(this.pwRaf); this.pwRO && this.pwRO.disconnect(); this.pwIO && this.pwIO.disconnect();
+    if (this.curMove) { window.removeEventListener('mousemove', this.curMove); document.removeEventListener('mouseleave', this.curOut); window.removeEventListener('mousedown', this.curDown); document.documentElement.classList.remove('gvl-cursor'); }
+    this.packIO && this.packIO.disconnect();
+    this.stepsIO && this.stepsIO.disconnect();
+    this.io && this.io.disconnect(); this.io = null; this.seen = null;
+  }
+
+  setupReveal() {
+    if (this.reduce) return;
+    if (!this.seen) this.seen = new WeakSet();
+    const show = el => {
+      el.style.opacity = '1'; el.style.translate = '0 0'; el.style.scale = '1';
+      this.io && this.io.unobserve(el);
+      setTimeout(() => { el.style.transitionDelay = '0ms'; }, 1200);
+    };
+    const inView = el => { const r = el.getBoundingClientRect(); return r.top < window.innerHeight && r.bottom > 0; };
+    if (!this.io) this.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) show(e.target); }), { threshold: 0.12 });
+    const fresh = [];
+    document.querySelectorAll('[data-reveal]').forEach(el => {
+      if (this.seen.has(el)) return;
+      this.seen.add(el);
+      const sibs = Array.from(el.parentElement.children).filter(c => c.hasAttribute('data-reveal'));
+      const idx = Math.max(0, sibs.indexOf(el));
+      if (!el.dataset.rvBase) el.dataset.rvBase = el.style.transition || '';
+      const base = el.dataset.rvBase ? el.dataset.rvBase + ', ' : '';
+      el.style.transition = base + 'opacity .9s cubic-bezier(.2,.7,.2,1), translate .9s cubic-bezier(.2,.7,.2,1), scale .9s cubic-bezier(.2,.7,.2,1)';
+      el.style.transitionDelay = (idx * 110) + 'ms';
+      el.style.opacity = '0'; el.style.translate = '0 32px'; el.style.scale = '0.985';
+      this.io.observe(el);
+      fresh.push(el);
+    });
+    if (fresh.length) {
+      requestAnimationFrame(() => requestAnimationFrame(() => fresh.forEach(el => { if (inView(el)) show(el); })));
+      setTimeout(() => fresh.forEach(el => { if (el.style.opacity === '0' && inView(el)) show(el); }), 1500);
+    }
+  }
+
+  tick() {
+    const y = window.scrollY, vh = window.innerHeight;
+    const max = document.documentElement.scrollHeight - vh;
+    if (this.progressRef.current) this.progressRef.current.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+    if (!this.reduce && this.heroBgRef.current && y < vh * 1.2) this.heroBgRef.current.style.transform = `translate3d(0, ${y * 0.3}px, 0)`;
+    const scrolled = y > 40;
+    let active = '';
+    for (const [id, key] of SECTIONS) { const el = document.getElementById(id); if (el && el.getBoundingClientRect().top < 140) active = key; }
+    let lit = this.state.lit;
+    const st = this.stepsRef.current;
+    if (st) {
+      const r = st.getBoundingClientRect();
+      const p = Math.min(1, Math.max(0, (vh * 0.75 - r.top - 200) / Math.max(1, r.height - 300)));
+      if (this.fillRef.current) {
+        if (this.state.isMobile) { this.fillRef.current.style.height = `calc((100% - 44px) * ${p})`; }
+        else { this.fillRef.current.style.width = `calc((100% - 44px) * ${p})`; }
+      }
+      lit = p <= 0.001 ? 0 : Math.min(5, 1 + Math.floor(p * 4.0001));
+    }
+    if (scrolled !== this.state.scrolled || active !== this.state.active || lit !== this.state.lit) this.setState({ scrolled, active, lit });
+  }
+
+  step(id, d) {
+    const max = this.props.maxPerItem ?? 10;
+    this.setState(s => ({ counts: { ...s.counts, [id]: Math.min(max, Math.max(0, s.counts[id] + d)) } }));
+  }
+  dataLines(s) {
+    const out = [];
+    if (s.tipo) out.push('Tipo de evento: ' + s.tipo);
+    if (s.fecha) out.push('Fecha: ' + fmtDate(s.fecha));
+    if (s.lugar.trim()) out.push('Lugar: ' + s.lugar.trim());
+    if (String(s.invitados).trim()) out.push('Invitados: ' + String(s.invitados).trim());
+    return out;
+  }
+  buildMessage(s) {
+    const lines = ['Hola Valentino, armé este pack en la web de GVL:', ''];
+    const grp = (g, title) => {
+      const rows = ITEMS.filter(i => i.g === g && s.counts[i.id] > 0).map(i => `- ${s.counts[i.id]} ${s.counts[i.id] === 1 ? i.one : i.many}`);
+      if (rows.length) lines.push(title + ':', ...rows, '');
+    };
+    grp('s', 'Sonido'); grp('l', 'Luces');
+    if (s.dj) lines.push('- DJ profesional', '');
+    const data = this.dataLines(s);
+    if (data.length) lines.push(...data, '');
+    lines.push('¿Me pasás disponibilidad y presupuesto?');
+    return lines.join('\n');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const max = this.props.maxPerItem ?? 10;
+    const motion = (this.props.animations ?? true) && !this.reduce;
+    const mkItem = i => {
+      const c = s.counts[i.id];
+      return {
+        label: i.label,
+        countEl: h('span', { key: c, style: { display: 'inline-block', animation: motion && c ? 'gvlPop .35s cubic-bezier(.2,.7,.2,1)' : 'none' } }, c),
+        dec: () => this.step(i.id, -1), inc: () => this.step(i.id, 1),
+        decDisabled: c <= 0, incDisabled: c >= max,
+        decOpacity: c <= 0 ? 0.3 : 1, incOpacity: c >= max ? 0.3 : 1,
+        countColor: c > 0 ? '#D6A77A' : '#7D7A76',
+        labelColor: c > 0 ? '#F2EFEA' : '#CFCBC5',
+        decAria: `Quitar ${i.one}`, incAria: `Sumar ${i.one}`,
+      };
+    };
+    const units = ITEMS.reduce((a, i) => a + s.counts[i.id], 0);
+    const canSend = units > 0 || s.dj;
+    const unitsTxt = units ? `${units} ${units === 1 ? 'equipo' : 'equipos'}` : '';
+    const totalLabel = canSend ? [unitsTxt, s.dj ? 'DJ' : ''].filter(Boolean).join(' + ') : 'Vacío';
+    const summaryGroups = [];
+    const lineEl = txt => h('span', { key: txt, style: { fontSize: 16, display: 'block', animation: motion ? 'gvlFadeIn .35s ease' : 'none' } }, txt);
+    const g = (code, title) => {
+      const lines = ITEMS.filter(i => i.g === code && s.counts[i.id] > 0).map(i => lineEl(`${s.counts[i.id]} ${s.counts[i.id] === 1 ? i.one : i.many}`));
+      if (lines.length) summaryGroups.push({ title, lines });
+    };
+    g('s', 'SONIDO'); g('l', 'LUCES');
+    if (s.dj) summaryGroups.push({ title: 'DJ', lines: [lineEl('DJ profesional')] });
+    const dataLines = this.dataLines(s);
+    const showBar = s.isMobile && s.packInView;
+
+    const heroBg = h('div', { ref: this.heroBgRef, style: { position: 'absolute', inset: '0 0 -12%', willChange: 'transform' } },
+      h('img', { src: 'assets/hero-cds-h.png', alt: '', style: { width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', animation: motion ? 'gvlZoom 26s ease-in-out infinite alternate' : 'none' } }));
+    const wave = h('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', gap: 2 } },
+      BARS.map((bh, i) => h('span', { key: i, style: {
+        flex: '1 1 0', maxWidth: 3, height: bh + '%', borderRadius: 2,
+        background: i > 22 && i < 42 ? '#D6A77A' : 'rgba(242,239,234,0.7)', transformOrigin: 'center',
+        animation: motion ? `gvlWave ${(0.8 + (i % 5) * 0.14).toFixed(2)}s ease-in-out ${(-i * 0.07).toFixed(2)}s infinite alternate` : 'none',
+      } })));
+    const mqItems = [...MARQUEE, ...MARQUEE, ...MARQUEE, ...MARQUEE];
+    const marquee = h('div', { style: { display: 'flex', width: 'max-content', animation: motion ? 'gvlMarquee 48s linear infinite' : 'none' } },
+      mqItems.map((t, i) => h('span', { key: i, 'aria-hidden': i >= MARQUEE.length ? 'true' : undefined, style: { display: 'flex', alignItems: 'center', gap: 28, paddingRight: 28, fontSize: 14, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#CFCBC5', whiteSpace: 'nowrap', fontWeight: 300 } },
+        t, h('span', { style: { width: 6, height: 6, background: '#D6A77A', transform: 'rotate(45deg)', flex: 'none' } }))));
+    const ctaGlow = h('div', { style: { position: 'absolute', left: '50%', top: '50%', width: 1100, height: 1100, borderRadius: '50%', background: 'conic-gradient(from 0deg, rgba(214,167,122,0) 0deg, rgba(214,167,122,0.35) 60deg, rgba(214,167,122,0) 140deg, rgba(40,110,110,0.25) 220deg, rgba(214,167,122,0) 300deg)', filter: 'blur(60px)', transform: 'translate(-50%,-50%)', animation: motion ? 'gvlSpin 30s linear infinite' : 'none' } });
+    const fabRing = h('span', { 'aria-hidden': 'true', style: { position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid #25D366', animation: motion ? 'gvlRing 2.6s ease-out infinite' : 'none' } });
+
+    const navItem = key => ({ color: s.active === key ? '#F2EFEA' : '#BDB9B3', line: s.active === key ? 1 : 0 });
+    const mob = s.isMobile;
+
+    return {
+      footImgRef: this.footImgRef, heroContentRef: this.heroContentRef, eqRef: this.eqRef, curDotRef: this.curDotRef, curRingRef: this.curRingRef, packBoxRef: this.packBoxRef, packWaveRef: this.packWaveRef, rippleRef: this.rippleRef,
+      heroMove: e => { const r = e.currentTarget.getBoundingClientRect(); this.mx = (e.clientX - r.left) / r.width; this.my = (e.clientY - r.top) / r.height; },
+      heroLeave: () => { this.mx = null; },
+      heroTap: e => this.heroPulse(e),
+      footMove: e => { if (!motion) return; const r = e.currentTarget.getBoundingClientRect(); this.footShift((e.clientX - r.left) / r.width - 0.5, (e.clientY - r.top) / r.height - 0.5); },
+      footLeave: () => this.footShift(0, 0),
+      progressRef: this.progressRef, lightRef: this.lightRef, stepsRef: this.stepsRef, fillRef: this.fillRef,
+      isMobile: mob, isDesktop: !mob,
+      navBg: s.scrolled || s.menuOpen ? 'rgba(14,14,16,0.88)' : 'rgba(14,14,16,0)',
+      navBorder: s.scrolled ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0)',
+      nav: { eventos: navItem('eventos'), servicios: navItem('servicios'), pack: navItem('pack'), comoFunciona: navItem('comoFunciona'), preguntas: navItem('preguntas') },
+      menuOpen: s.menuOpen,
+      menuRows: mob && s.menuOpen ? '1fr' : '0fr',
+      menuOpacity: s.menuOpen ? 1 : 0,
+      burgerTop: s.menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none',
+      burgerMid: s.menuOpen ? 0 : 1,
+      burgerBot: s.menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none',
+      toggleMenu: () => this.setState(p => ({ menuOpen: !p.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      heroBg, wave, marquee, ctaGlow, fabRing,
+      waGeneral: wa('Hola Valentino, estoy organizando un evento y quiero cotizar.' + DATA),
+      wa15: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un cumpleaños de 15.' + DATA),
+      waCasamiento: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un casamiento.' + DATA),
+      waPrivado: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un evento privado.' + DATA),
+      waSonido: wa('Hola Valentino, quiero consultar por alquiler de equipo de sonido.' + DATA),
+      waLuces: wa('Hola Valentino, quiero consultar por alquiler de equipo de luces.' + DATA),
+      waDJ: wa('Hola Valentino, quiero consultar por el servicio de DJ.' + DATA),
+      waAsesoria: wa('Hola Valentino, no sé bien qué necesito para mi evento y me gustaría que me asesoren.' + DATA),
+      rightMax: s.wide ? '380px' : 'none',
+      adviceGlow: h('div', { 'aria-hidden': 'true', style: { position: 'absolute', left: '-30%', right: '-30%', top: '-60%', height: '120%', background: 'radial-gradient(closest-side, rgba(214,167,122,0.18), rgba(214,167,122,0))', animation: motion ? 'gvlBreath 3.5s ease-in-out infinite alternate' : 'none', pointerEvents: 'none' } }),
+      adviceOpen: s.adviceOpen,
+      toggleAdvice: () => this.setState(p => ({ adviceOpen: !p.adviceOpen })),
+      adviceRows: s.adviceOpen ? '1fr' : '0fr',
+      adviceOpacity: s.adviceOpen ? 1 : 0,
+      adviceRot: s.adviceOpen ? 45 : 0,
+      soundItems: ITEMS.filter(i => i.g === 's').map(mkItem),
+      lightItems: ITEMS.filter(i => i.g === 'l').map(mkItem),
+      dj: s.dj,
+      toggleDJ: () => this.setState(p => ({ dj: !p.dj })),
+      djTrack: s.dj ? '#D6A77A' : '#26262C',
+      djKnob: s.dj ? '#120C08' : '#CFCBC5',
+      djKnobX: s.dj ? 24 : 0,
+      tipo: s.tipo, fecha: s.fecha, lugar: s.lugar, invitados: s.invitados,
+      setTipo: e => this.setState({ tipo: e.target.value }),
+      setFecha: e => this.setState({ fecha: e.target.value }),
+      setLugar: e => this.setState({ lugar: e.target.value }),
+      setInvitados: e => this.setState({ invitados: e.target.value }),
+      reset: () => this.setState({ counts: { ...EMPTY }, dj: false, tipo: '', fecha: '', lugar: '', invitados: '' }),
+      canSend, isEmpty: !canSend, totalLabel,
+      summaryBorder: canSend ? 'rgba(214,167,122,0.45)' : 'rgba(255,255,255,0.1)',
+      barLabel: canSend ? 'Tu pack: ' + totalLabel : 'Tu pack está vacío',
+      summaryGroups, dataLines, hasData: dataLines.length > 0,
+      packUrl: wa(this.buildMessage(s)),
+      barY: showBar ? '0%' : '110%',
+      barVis: showBar ? 'visible' : 'hidden',
+      fabBottom: showBar ? 140 : 18,
+      stepCols: mob ? '1fr' : 'repeat(5, minmax(0, 1fr))',
+      stepGap: mob ? '36px' : '24px',
+      trackLeft: '22px', trackTop: '22px',
+      trackW: mob ? '1px' : 'calc(100% - 44px)',
+      trackH: mob ? 'calc(100% - 44px)' : '1px',
+      fillW0: mob ? '1px' : '0px',
+      fillH0: mob ? '0px' : '1px',
+      digitH: mob ? '76px' : '104px',
+      steps: STEPS.map((st, i) => {
+        const on = i < s.lit;
+        const rb = s.rebuild[i], fast = rb > 0, started = !motion || s.stepsOn;
+        const start = fast ? 0 : i * 450;
+        const H = mob ? 76 : 104;
+        const sh = SHAPES[i + 1];
+        const solids = sh.solid.map((d, j) => h('path', { key: 's' + j, d, fill: '#F2EFEA', style: {
+          transformBox: 'fill-box', transformOrigin: 'center', opacity: started ? undefined : 0,
+          animation: motion && s.stepsOn ? 'gvlSolidIn ' + (fast ? 0.35 : 0.6) + 's cubic-bezier(.2,.7,.2,1) ' + (start + j * 120) + 'ms both' : 'none' } }));
+        const outs = sh.outline.map((d, j) => h('path', { key: 'o' + j, d, fill: 'none', stroke: '#D6A77A', strokeWidth: 1.5, vectorEffect: 'non-scaling-stroke', pathLength: 1, strokeDasharray: 1, strokeDashoffset: started ? 0 : 1, style: {
+          animation: motion && s.stepsOn ? 'gvlDraw ' + (fast ? 0.4 : 0.8) + 's ease-in-out ' + (start + (fast ? 120 : 300) + j * 200) + 'ms both' : 'none' } }));
+        const digit = h('svg', { key: 'd' + i + '-' + rb, viewBox: '0 0 100 132', width: Math.round(H * 100 / 132), height: H, 'aria-hidden': 'true', style: { display: 'block', overflow: 'visible' } }, solids, outs);
+        return {
+          ...st, n: i + 1, dir: mob ? 'row' : 'column', digit,
+          ring: on ? '#D6A77A' : 'rgba(255,255,255,0.2)', bg: on ? '#D6A77A' : '#0E0E10', scale: on ? 1.2 : 1,
+          descOpacity: started ? 1 : 0, descY: started ? '0px' : '8px',
+          descDelay: motion ? (i * 450 + 1000) + 'ms' : '0ms',
+          onEnter: () => { if (!motion || !this.state.stepsOn) return; this.setState(p => { const r = [...p.rebuild]; r[i]++; return { rebuild: r }; }); },
+        };
+      }),
+
+      faqs: FAQS.map(([q, a], i) => {
+        const open = s.faq === i;
+        return {
+          q, a, open, rot: open ? 45 : 0, rows: open ? '1fr' : '0fr', opacity: open ? 1 : 0,
+          color: open ? '#E4BD95' : '#F2EFEA', iconBg: open ? '#D6A77A' : 'transparent', iconColor: open ? '#120C08' : '#D6A77A',
+          toggle: () => this.setState(p => ({ faq: p.faq === i ? -1 : i })),
+        };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>

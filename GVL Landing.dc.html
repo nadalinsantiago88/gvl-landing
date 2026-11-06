@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>GVL · Sonido, luces y DJ para eventos en Rosario</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:#0E0E10;color:#F2EFEA;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+*{box-sizing:border-box}
+a{color:#FF7A3D;text-decoration:none}
+a:hover{color:#FF956A}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid #FF7A3D;outline-offset:3px;border-radius:6px}
+input::placeholder{color:#7D7A76}
+button{font-family:inherit}
+@keyframes gvlWave{0%{transform:scaleY(.35)}100%{transform:scaleY(1)}}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+
+<header style="position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(14,14,16,0.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.07)">
+  <nav aria-label="Principal" style="max-width:1200px;margin:0 auto;height:68px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px">
+    <a href="#inicio" aria-label="GVL, ir al inicio" style="display:flex;align-items:center;gap:10px;color:#F2EFEA">
+      <span aria-hidden="true" style="display:flex;align-items:center;gap:2px;height:24px">
+        <span style="width:3px;height:30%;background:#FF7A3D;border-radius:2px"></span>
+        <span style="width:3px;height:70%;background:#FF7A3D;border-radius:2px"></span>
+        <span style="width:3px;height:100%;background:#FF7A3D;border-radius:2px"></span>
+        <span style="width:3px;height:55%;background:#FF7A3D;border-radius:2px"></span>
+        <span style="width:3px;height:25%;background:#FF7A3D;border-radius:2px"></span>
+      </span>
+      <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;letter-spacing:0.14em">GVL</span>
+    </a>
+    <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;gap:28px">
+        <a href="#eventos" style="color:#CFCBC5;font-size:15px" style-hover="color:#F2EFEA">Eventos</a>
+        <a href="#servicios" style="color:#CFCBC5;font-size:15px" style-hover="color:#F2EFEA">Servicios</a>
+        <a href="#pack" style="color:#CFCBC5;font-size:15px" style-hover="color:#F2EFEA">Armá tu pack</a>
+        <a href="#como-funciona" style="color:#CFCBC5;font-size:15px" style-hover="color:#F2EFEA">Cómo funciona</a>
+        <a href="#preguntas" style="color:#CFCBC5;font-size:15px" style-hover="color:#F2EFEA">Preguntas</a>
+      </div>
+      <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:15px;transition:background .2s" style-hover="background:#FF956A;color:#120C08" style-active="transform:scale(0.97)">Escribile a Valentino</a>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:8px">
+        <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:15px" style-active="transform:scale(0.97)">WhatsApp</a>
+        <button type="button" onClick="{{ toggleMenu }}" aria-expanded="{{ menuOpen }}" aria-controls="menu-movil" aria-label="Abrir menú" style="width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer">
+          <span style="width:18px;height:2px;background:#F2EFEA;border-radius:2px"></span>
+          <span style="width:18px;height:2px;background:#F2EFEA;border-radius:2px"></span>
+          <span style="width:18px;height:2px;background:#F2EFEA;border-radius:2px"></span>
+        </button>
+      </div>
+    </sc-if>
+  </nav>
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div id="menu-movil" style="border-top:1px solid rgba(255,255,255,0.07);padding:8px 20px 20px;display:flex;flex-direction:column;background:#0E0E10">
+      <a href="#eventos" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:18px;border-bottom:1px solid rgba(255,255,255,0.06)">Eventos</a>
+      <a href="#servicios" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:18px;border-bottom:1px solid rgba(255,255,255,0.06)">Servicios</a>
+      <a href="#pack" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:18px;border-bottom:1px solid rgba(255,255,255,0.06)">Armá tu pack</a>
+      <a href="#como-funciona" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:18px;border-bottom:1px solid rgba(255,255,255,0.06)">Cómo funciona</a>
+      <a href="#preguntas" onClick="{{ closeMenu }}" style="display:flex;align-items:center;min-height:56px;color:#F2EFEA;font-size:18px">Preguntas</a>
+    </div>
+  </sc-if>
+</header>
+
+<main>
+  <section id="inicio" data-screen-label="01 Hero" style="position:relative;padding:clamp(100px,14vw,150px) 20px clamp(64px,9vw,110px);overflow:hidden">
+    <div aria-hidden="true" style="position:absolute;top:-200px;right:-200px;width:700px;height:700px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,122,61,0.16),rgba(255,122,61,0))"></div>
+    <div style="position:relative;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:clamp(40px,6vw,72px);align-items:center">
+      <div data-reveal="" style="display:flex;flex-direction:column;gap:24px">
+        <p style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">DJ · SONIDO · LUCES</p>
+        <h1 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.4rem,6.4vw,4.6rem);line-height:0.98;letter-spacing:-0.02em;text-transform:uppercase;text-wrap:balance">Sonido, luces y DJ para tu evento en Rosario</h1>
+        <p style="margin:0;font-size:clamp(1.0625rem,1.6vw,1.25rem);color:#CFCBC5;max-width:34em;text-wrap:pretty">Para 15, casamientos y fiestas privadas. Armamos y probamos todo un día antes, para que esa noche solo te ocupes de disfrutar.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:4px">
+          <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 28px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:17px;transition:background .2s" style-hover="background:#FF956A;color:#120C08" style-active="transform:scale(0.97)">Consultá por WhatsApp</a>
+          <a href="#pack" style="display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 28px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600;font-size:17px;transition:background .2s" style-hover="background:rgba(255,122,61,0.12);color:#F2EFEA" style-active="transform:scale(0.97)">Armá tu pack</a>
+        </div>
+        <ul style="list-style:none;margin:16px 0 0;padding:20px 0 0;border-top:1px solid rgba(255,255,255,0.08);display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#E4E0DA;line-height:1.35">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF7A3D" stroke-width="1.8" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"></circle><polyline points="8 12.5 11 15.5 16.5 9.5"></polyline></svg>
+            Probado un día antes
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#E4E0DA;line-height:1.35">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF7A3D" stroke-width="1.8" aria-hidden="true" style="flex:none"><rect x="4" y="4" width="16" height="4" rx="1"></rect><rect x="4" y="10" width="16" height="4" rx="1"></rect><rect x="4" y="16" width="16" height="4" rx="1"></rect></svg>
+            Sonido, luces y DJ en un solo lugar
+          </li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:15px;color:#E4E0DA;line-height:1.35">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF7A3D" stroke-width="1.8" aria-hidden="true" style="flex:none"><rect x="3" y="4" width="18" height="13" rx="3"></rect><polyline points="8 17 8 21 12 17"></polyline></svg>
+            Atención directa con Valentino
+          </li>
+        </ul>
+      </div>
+      <figure data-reveal="" style="margin:0;position:relative;border-radius:28px;overflow:hidden;aspect-ratio:4/5;max-height:640px;width:100%;background:#17171B">
+        <img src="assets/brillo.jpg" alt="Ilustración abstracta: un haz de luz naranja que atraviesa una esfera sobre fondo oscuro" style="width:100%;height:100%;object-fit:cover;object-position:center 45%">
+        <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:38%;background:linear-gradient(to top,rgba(14,14,16,0.92),rgba(14,14,16,0))"></div>
+        <div aria-hidden="true" style="position:absolute;left:24px;right:24px;bottom:24px;height:72px">{{ wave }}</div>
+      </figure>
+    </div>
+  </section>
+
+  <section id="eventos" data-screen-label="02 Eventos" style="scroll-margin-top:72px;padding:clamp(72px,10vw,128px) 20px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div data-reveal="" style="max-width:720px;margin-bottom:clamp(36px,5vw,56px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">EVENTOS</p>
+        <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em;text-wrap:balance">Cada evento tiene su momento clave</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="aspect-ratio:4/3;overflow:hidden;background:#1F1F24"><img src="assets/brillo.jpg" alt="Ilustración: haz de luz naranja y verde azulado" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:10% 92%"></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem;letter-spacing:-0.01em">Cumpleaños de 15</h3>
+            <p style="margin:0;color:#CFCBC5;flex:1;text-wrap:pretty">La entrada, el vals y una pista que no para.</p>
+            <a href="{{ wa15 }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar para mi 15</a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="aspect-ratio:4/3;overflow:hidden;background:#1F1F24"><img src="assets/brillo.jpg" alt="Ilustración: esfera iluminada por un haz naranja" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 48%"></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem;letter-spacing:-0.01em">Casamientos</h3>
+            <p style="margin:0;color:#CFCBC5;flex:1;text-wrap:pretty">El ingreso, el brindis y una pista llena hasta el final de la noche.</p>
+            <a href="{{ waCasamiento }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar para mi casamiento</a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="aspect-ratio:4/3;overflow:hidden;background:#1F1F24"><img src="assets/parlantes.jpg" alt="Ilustración: muchos parlantes negros superpuestos" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 40%"></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:12px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem;letter-spacing:-0.01em">Eventos y fiestas privadas</h3>
+            <p style="margin:0;color:#CFCBC5;flex:1;text-wrap:pretty">Cumpleaños, aniversarios o reuniones: el sonido justo para tu lugar y tu gente.</p>
+            <a href="{{ waPrivado }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar para mi evento</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="03 Dudas" style="position:relative;padding:clamp(72px,10vw,128px) 20px;overflow:hidden;background:#121215">
+    <img src="assets/espuma.jpg" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.35">
+    <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,#0E0E10 0%,rgba(14,14,16,0.6) 30%,rgba(14,14,16,0.6) 70%,#0E0E10 100%)"></div>
+    <div style="position:relative;max-width:1200px;margin:0 auto">
+      <div data-reveal="" style="max-width:720px;margin-bottom:clamp(36px,5vw,56px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">ANTES DE CONTRATAR</p>
+        <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em;text-wrap:balance">Lo que todos preguntan antes de contratar</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden">
+        <div data-reveal="" style="background:rgba(23,23,27,0.94);padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:#FF7A3D;font-weight:600">01</span>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.4rem;line-height:1.2">¿Van a llegar a tiempo?</h3>
+          <p style="margin:0;color:#CFCBC5;text-wrap:pretty">Armamos y probamos todo el día anterior. El día del evento no hay apuro.</p>
+        </div>
+        <div data-reveal="" style="background:rgba(23,23,27,0.94);padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:#FF7A3D;font-weight:600">02</span>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.4rem;line-height:1.2">¿Va a alcanzar para mi salón?</h3>
+          <p style="margin:0;color:#CFCBC5;text-wrap:pretty">Contanos el lugar y cuántos invitados son, y te recomendamos el equipo justo.</p>
+        </div>
+        <div data-reveal="" style="background:rgba(23,23,27,0.94);padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:#FF7A3D;font-weight:600">03</span>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.4rem;line-height:1.2">¿Puedo elegir la música?</h3>
+          <p style="margin:0;color:#CFCBC5;text-wrap:pretty">Sí. El DJ arma la música con vos: lo que no puede faltar y lo que no querés escuchar.</p>
+        </div>
+        <div data-reveal="" style="background:rgba(23,23,27,0.94);padding:clamp(24px,3vw,36px);display:flex;flex-direction:column;gap:12px">
+          <span style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:#FF7A3D;font-weight:600">04</span>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.4rem;line-height:1.2">¿Cuánto sale?</h3>
+          <p style="margin:0;color:#CFCBC5;text-wrap:pretty">Depende del equipo y del evento. Escribinos y te pasamos un presupuesto claro.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicios" data-screen-label="04 Servicios" style="scroll-margin-top:72px;padding:clamp(72px,10vw,128px) 20px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div data-reveal="" style="max-width:720px;margin-bottom:clamp(36px,5vw,56px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">SERVICIOS</p>
+        <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em;text-wrap:balance">Contratá todo junto o solo lo que necesitás</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="aspect-ratio:16/10;overflow:hidden;background:#1F1F24"><img src="assets/parlantes.jpg" alt="Ilustración: parlantes de distintos tamaños" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 72%"></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem">Equipo de sonido</h3>
+            <p style="margin:0;color:#CFCBC5">Que se escuche bien en todo el salón. Ideal si ya tenés tu música o tu DJ.</p>
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;flex:1">
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Torres de sonido</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Parlantes</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Subwoofers</li>
+            </ul>
+            <a href="{{ waSonido }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar</a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="aspect-ratio:16/10;overflow:hidden;background:#1F1F24"><img src="assets/brillo.jpg" alt="Ilustración: haz de luz naranja que cruza la oscuridad" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:90% 22%"></div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem">Equipo de luces</h3>
+            <p style="margin:0;color:#CFCBC5">Para que la pista se vea tan bien como suena.</p>
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;flex:1">
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Cabezas móviles</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Láser</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Máquina de humo</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Luces de ambiente</li>
+            </ul>
+            <a href="{{ waLuces }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar</a>
+          </div>
+        </article>
+        <article data-reveal="" style="display:flex;flex-direction:column;background:#17171B;border:1px solid rgba(255,255,255,0.07);border-radius:24px;overflow:hidden">
+          <div style="position:relative;aspect-ratio:16/10;overflow:hidden;background:#1F1F24">
+            <img src="assets/espuma.jpg" alt="Ilustración: paneles acústicos de estudio" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 40%">
+            <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(circle at 70% 80%,rgba(255,122,61,0.45),rgba(255,122,61,0) 60%)"></div>
+          </div>
+          <div style="padding:24px;display:flex;flex-direction:column;gap:14px;flex:1">
+            <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.6rem">DJ profesional</h3>
+            <p style="margin:0;color:#CFCBC5">Música armada con vos, leyendo la pista toda la noche.</p>
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;flex:1">
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Lo que no puede faltar</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Lo que no querés escuchar</li>
+              <li style="display:flex;gap:10px;align-items:center"><span aria-hidden="true" style="width:6px;height:6px;background:#FF7A3D;border-radius:1px;flex:none"></span>Una pista que no se vacía</li>
+            </ul>
+            <a href="{{ waDJ }}" target="_blank" rel="noopener" style="margin-top:8px;display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 20px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600" style-hover="background:#FF7A3D;color:#120C08;border-color:#FF7A3D" style-active="transform:scale(0.98)">Consultar</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="pack" data-screen-label="05 Armá tu pack" style="scroll-margin-top:72px;padding:clamp(24px,4vw,48px) 12px clamp(72px,10vw,128px)">
+    <div style="position:relative;max-width:1240px;margin:0 auto;background:#141417;border:1px solid rgba(255,122,61,0.22);border-radius:32px;padding:clamp(28px,5vw,64px) clamp(16px,4vw,56px);overflow:hidden">
+      <div aria-hidden="true" style="position:absolute;top:-260px;left:50%;transform:translateX(-50%);width:900px;height:520px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,122,61,0.18),rgba(255,122,61,0))"></div>
+      <div data-reveal="" style="position:relative;max-width:720px;margin-bottom:clamp(32px,4vw,48px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">ARMÁ TU PACK</p>
+        <h2 style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em;text-wrap:balance">Armá tu pack y mandáselo a Valentino</h2>
+        <p style="margin:0;color:#CFCBC5;font-size:1.0625rem">Elegí lo que necesitás y te respondemos con disponibilidad y presupuesto.</p>
+      </div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+        <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+          <fieldset style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:8px 20px 12px;background:#1A1A1E;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.16em;color:#FF7A3D">SONIDO</legend>
+            <sc-for list="{{ soundItems }}" as="item" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:68px;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <span style="font-size:17px">{{ item.label }}</span>
+                <div style="display:flex;align-items:center;gap:6px" role="group" aria-label="{{ item.label }}">
+                  <button type="button" onClick="{{ item.dec }}" disabled="{{ item.decDisabled }}" aria-label="{{ item.decAria }}" style="width:48px;height:48px;border-radius:14px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:22px;line-height:1;cursor:pointer;opacity:{{ item.decOpacity }}" style-active="transform:scale(0.94)">–</button>
+                  <output aria-live="polite" style="width:40px;text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;color:{{ item.countColor }}">{{ item.count }}</output>
+                  <button type="button" onClick="{{ item.inc }}" disabled="{{ item.incDisabled }}" aria-label="{{ item.incAria }}" style="width:48px;height:48px;border-radius:14px;border:1px solid rgba(255,122,61,0.5);background:rgba(255,122,61,0.1);color:#FF7A3D;font-size:22px;line-height:1;cursor:pointer;opacity:{{ item.incOpacity }}" style-hover="background:rgba(255,122,61,0.2)" style-active="transform:scale(0.94)">+</button>
+                </div>
+              </div>
+            </sc-for>
+          </fieldset>
+          <fieldset style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:8px 20px 12px;background:#1A1A1E;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.16em;color:#FF7A3D">LUCES</legend>
+            <sc-for list="{{ lightItems }}" as="item" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:68px;border-bottom:1px solid rgba(255,255,255,0.06)">
+                <span style="font-size:17px">{{ item.label }}</span>
+                <div style="display:flex;align-items:center;gap:6px" role="group" aria-label="{{ item.label }}">
+                  <button type="button" onClick="{{ item.dec }}" disabled="{{ item.decDisabled }}" aria-label="{{ item.decAria }}" style="width:48px;height:48px;border-radius:14px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:22px;line-height:1;cursor:pointer;opacity:{{ item.decOpacity }}" style-active="transform:scale(0.94)">–</button>
+                  <output aria-live="polite" style="width:40px;text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;color:{{ item.countColor }}">{{ item.count }}</output>
+                  <button type="button" onClick="{{ item.inc }}" disabled="{{ item.incDisabled }}" aria-label="{{ item.incAria }}" style="width:48px;height:48px;border-radius:14px;border:1px solid rgba(255,122,61,0.5);background:rgba(255,122,61,0.1);color:#FF7A3D;font-size:22px;line-height:1;cursor:pointer;opacity:{{ item.incOpacity }}" style-hover="background:rgba(255,122,61,0.2)" style-active="transform:scale(0.94)">+</button>
+                </div>
+              </div>
+            </sc-for>
+          </fieldset>
+          <fieldset style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:8px 20px 16px;background:#1A1A1E;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.16em;color:#FF7A3D">DJ</legend>
+            <button type="button" role="switch" aria-checked="{{ dj }}" onClick="{{ toggleDJ }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;background:transparent;border:0;color:#F2EFEA;cursor:pointer;padding:0;text-align:left">
+              <span style="display:flex;flex-direction:column">
+                <span style="font-size:17px">Sumar DJ profesional</span>
+                <span style="font-size:15px;color:#A7A4A0">Música armada con vos para toda la noche</span>
+              </span>
+              <span aria-hidden="true" style="flex:none;position:relative;width:56px;height:32px;border-radius:999px;background:{{ djTrack }};border:1px solid rgba(255,255,255,0.14);transition:background .2s">
+                <span style="position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:{{ djKnob }};transform:translateX({{ djKnobX }}px);transition:transform .2s"></span>
+              </span>
+            </button>
+          </fieldset>
+          <fieldset style="margin:0;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:12px 20px 20px;background:#1A1A1E;min-width:0">
+            <legend style="padding:0 8px;margin-left:-8px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;letter-spacing:0.16em;color:#FF7A3D">TU EVENTO <span style="color:#A7A4A0;letter-spacing:0.04em;font-weight:500">(opcional)</span></legend>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Tipo de evento
+                <select value="{{ tipo }}" onChange="{{ setTipo }}" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:16px;font-family:inherit;color-scheme:dark">
+                  <option value="">Elegí una opción</option>
+                  <option value="Cumpleaños de 15">Cumpleaños de 15</option>
+                  <option value="Casamiento">Casamiento</option>
+                  <option value="Evento privado">Evento privado</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Fecha
+                <input type="date" value="{{ fecha }}" onChange="{{ setFecha }}" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:16px;font-family:inherit;color-scheme:dark">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Lugar o salón
+                <input type="text" value="{{ lugar }}" onChange="{{ setLugar }}" placeholder="Ej: Salón del Parque" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:16px;font-family:inherit">
+              </label>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:15px;color:#CFCBC5">Cantidad de invitados
+                <input type="number" inputmode="numeric" min="1" value="{{ invitados }}" onChange="{{ setInvitados }}" placeholder="Ej: 150" style="min-height:50px;padding:0 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:#232328;color:#F2EFEA;font-size:16px;font-family:inherit">
+              </label>
+            </div>
+          </fieldset>
+        </div>
+
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <aside aria-label="Resumen de tu pack" style="flex:0 1 360px;min-width:0;position:sticky;top:92px;background:#1F1F24;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">
+              <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.4rem">Tu pack</h3>
+              <span aria-live="polite" style="font-size:15px;color:#CFCBC5">{{ totalLabel }}</span>
+            </div>
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+              <p style="margin:0;color:#A7A4A0;font-size:15px;padding:20px;border:1px dashed rgba(255,255,255,0.14);border-radius:14px;text-align:center">Sumá equipos o el DJ y acá vas a ver tu pack.</p>
+            </sc-if>
+            <sc-for list="{{ summaryGroups }}" as="g" hint-placeholder-count="0">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <span style="font-size:13px;font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:0.14em;color:#FF7A3D">{{ g.title }}</span>
+                <sc-for list="{{ g.lines }}" as="line" hint-placeholder-count="1">
+                  <span style="font-size:16px">{{ line }}</span>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ hasData }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:4px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08)">
+                <sc-for list="{{ dataLines }}" as="line" hint-placeholder-count="0">
+                  <span style="font-size:15px;color:#CFCBC5">{{ line }}</span>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ packUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:56px;padding:0 20px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:17px;text-align:center" style-hover="background:#FF956A;color:#120C08" style-active="transform:scale(0.98)">Enviar mi pack por WhatsApp</a>
+            </sc-if>
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+              <button type="button" disabled="" style="min-height:56px;padding:0 20px;border-radius:999px;background:#2A2A30;color:#A7A4A0;border:0;font-weight:600;font-size:15px;cursor:not-allowed">Elegí al menos un equipo o el DJ</button>
+            </sc-if>
+            <button type="button" onClick="{{ reset }}" style="align-self:center;min-height:44px;padding:0 16px;background:transparent;border:0;color:#CFCBC5;font-size:15px;text-decoration:underline;text-underline-offset:4px;cursor:pointer" style-hover="color:#F2EFEA">Vaciar</button>
+          </aside>
+        </sc-if>
+      </div>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;display:flex;justify-content:center;margin-top:12px">
+          <button type="button" onClick="{{ reset }}" style="min-height:44px;padding:0 16px;background:transparent;border:0;color:#CFCBC5;font-size:15px;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Vaciar y empezar de nuevo</button>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <section id="como-funciona" data-screen-label="06 Cómo funciona" style="scroll-margin-top:72px;padding:clamp(72px,10vw,128px) 20px">
+    <div style="max-width:1200px;margin:0 auto">
+      <div data-reveal="" style="max-width:720px;margin-bottom:clamp(36px,5vw,56px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">CÓMO FUNCIONA</p>
+        <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em;text-wrap:balance">De tu mensaje a la pista, en cinco pasos</h2>
+      </div>
+      <ol style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:28px 20px">
+        <li data-reveal="" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #FF7A3D;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;color:#FF7A3D">1</span><span aria-hidden="true" style="flex:1;height:1px;background:rgba(255,122,61,0.35)"></span></div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem">Nos escribís</h3>
+          <p style="margin:0;color:#CFCBC5">Por WhatsApp, con tu evento o tu pack.</p>
+        </li>
+        <li data-reveal="" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #FF7A3D;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;color:#FF7A3D">2</span><span aria-hidden="true" style="flex:1;height:1px;background:rgba(255,122,61,0.35)"></span></div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem">Te recomendamos y cotizamos</h3>
+          <p style="margin:0;color:#CFCBC5">Según tu salón y tu cantidad de invitados.</p>
+        </li>
+        <li data-reveal="" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #FF7A3D;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;color:#FF7A3D">3</span><span aria-hidden="true" style="flex:1;height:1px;background:rgba(255,122,61,0.35)"></span></div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem">Reservás la fecha</h3>
+          <p style="margin:0;color:#CFCBC5">Y queda agendada para vos.</p>
+        </li>
+        <li data-reveal="" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:50%;border:1px solid #FF7A3D;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:600;color:#FF7A3D">4</span><span aria-hidden="true" style="flex:1;height:1px;background:rgba(255,122,61,0.35)"></span></div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem">Armamos y probamos todo un día antes</h3>
+          <p style="margin:0;color:#CFCBC5">Ese día se paga la seña del 25%.</p>
+        </li>
+        <li data-reveal="" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="flex:none;width:44px;height:44px;border-radius:50%;background:#FF7A3D;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#120C08">5</span></div>
+          <h3 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.25rem">Disfrutás tu evento</h3>
+          <p style="margin:0;color:#CFCBC5">El resto se paga ese día, antes de empezar.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="preguntas" data-screen-label="07 Preguntas" style="scroll-margin-top:72px;padding:clamp(48px,7vw,96px) 20px clamp(72px,10vw,128px)">
+    <div style="max-width:820px;margin:0 auto">
+      <div data-reveal="" style="margin-bottom:clamp(28px,4vw,44px)">
+        <p style="margin:0 0 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.18em;color:#FF7A3D">PREGUNTAS</p>
+        <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2rem,4.4vw,3.25rem);line-height:1.05;letter-spacing:-0.02em">Preguntas frecuentes</h2>
+      </div>
+      <div data-reveal="" style="border-top:1px solid rgba(255,255,255,0.1)">
+        <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="6">
+          <div style="border-bottom:1px solid rgba(255,255,255,0.1)">
+            <h3 style="margin:0">
+              <button type="button" onClick="{{ f.toggle }}" aria-expanded="{{ f.open }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:68px;padding:16px 0;background:transparent;border:0;color:#F2EFEA;font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:1.15rem;text-align:left;cursor:pointer" style-hover="color:#FF956A">
+                <span>{{ f.q }}</span>
+                <span aria-hidden="true" style="flex:none;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,122,61,0.5);color:#FF7A3D;display:flex;align-items:center;justify-content:center;font-size:20px;transition:transform .25s;transform:rotate({{ f.rot }}deg)">+</span>
+              </button>
+            </h3>
+            <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;padding:0 52px 22px 0;color:#CFCBC5;text-wrap:pretty">{{ f.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="08 Llamado final" style="position:relative;padding:clamp(88px,12vw,150px) 20px;overflow:hidden;text-align:center">
+    <img src="assets/piso.jpg" alt="" aria-hidden="true" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.4">
+    <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 110%,rgba(255,122,61,0.35),rgba(14,14,16,0.2) 45%,#0E0E10 85%)"></div>
+    <div data-reveal="" style="position:relative;max-width:760px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:20px">
+      <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(2.2rem,5.4vw,4rem);line-height:1.02;letter-spacing:-0.02em;text-wrap:balance">¿Ya tenés fecha para tu evento?</h2>
+      <p style="margin:0;color:#E4E0DA;font-size:clamp(1.0625rem,1.6vw,1.25rem);max-width:32em;text-wrap:pretty">Contanos qué estás organizando y Valentino te responde con disponibilidad y presupuesto.</p>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px">
+        <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 34px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:18px" style-hover="background:#FF956A;color:#120C08" style-active="transform:scale(0.97)">Escribile a Valentino</a>
+        <a href="#pack" style="display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 30px;border-radius:999px;border:1px solid rgba(255,122,61,0.55);color:#F2EFEA;font-weight:600;font-size:18px;background:rgba(14,14,16,0.5)" style-hover="background:rgba(255,122,61,0.14);color:#F2EFEA" style-active="transform:scale(0.97)">Armá tu pack</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer style="border-top:1px solid rgba(255,255,255,0.07);padding:40px 20px clamp(120px,14vw,48px)">
+  <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span style="display:flex;align-items:center;gap:10px">
+        <span aria-hidden="true" style="display:flex;align-items:center;gap:2px;height:22px">
+          <span style="width:3px;height:30%;background:#FF7A3D;border-radius:2px"></span>
+          <span style="width:3px;height:70%;background:#FF7A3D;border-radius:2px"></span>
+          <span style="width:3px;height:100%;background:#FF7A3D;border-radius:2px"></span>
+          <span style="width:3px;height:55%;background:#FF7A3D;border-radius:2px"></span>
+          <span style="width:3px;height:25%;background:#FF7A3D;border-radius:2px"></span>
+        </span>
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;letter-spacing:0.14em">GVL</span>
+      </span>
+      <span style="color:#A7A4A0;font-size:15px">DJ, sonido e iluminación para eventos en Rosario</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:15px">
+      <a href="{{ waGeneral }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;min-height:44px;color:#F2EFEA" style-hover="color:#FF956A">WhatsApp: 341 339-2546</a>
+      <span style="color:#A7A4A0">© 2026 GVL</span>
+    </div>
+  </div>
+</footer>
+
+<a href="{{ waGeneral }}" target="_blank" rel="noopener" aria-label="Escribile a Valentino por WhatsApp" style="position:fixed;right:18px;bottom:{{ fabBottom }}px;z-index:60;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45);transition:bottom .25s, transform .15s" style-hover="transform:scale(1.06)" style-active="transform:scale(0.95)">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="4"></rect><polyline points="7 17 6 21 11 17"></polyline></svg>
+</a>
+
+<sc-if value="{{ showBar }}" hint-placeholder-val="{{ false }}">
+  <div role="region" aria-label="Resumen de tu pack" style="position:fixed;left:0;right:0;bottom:0;z-index:55;background:rgba(23,23,27,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,122,61,0.3);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <span aria-live="polite" style="font-size:15px;color:#E4E0DA;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ barLabel }}</span>
+      <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+        <button type="button" onClick="{{ reset }}" style="flex:none;min-height:36px;padding:0 6px;background:transparent;border:0;color:#CFCBC5;font-size:15px;text-decoration:underline;text-underline-offset:4px;cursor:pointer">Vaciar</button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ canSend }}" hint-placeholder-val="{{ false }}">
+      <a href="{{ packUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;background:#FF7A3D;color:#120C08;font-weight:600;font-size:17px" style-active="transform:scale(0.98)">Enviar mi pack por WhatsApp</a>
+    </sc-if>
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ true }}">
+      <button type="button" disabled="" style="min-height:52px;border-radius:999px;background:#2A2A30;color:#A7A4A0;border:0;font-weight:600;font-size:15px">Elegí al menos un equipo o el DJ</button>
+    </sc-if>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;maxPerItem&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:10,&quot;min&quot;:1,&quot;max&quot;:30,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Armador&quot;},&quot;animatedWave&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;}}">
+const WA = 'https://wa.me/5493413392546?text=';
+const DATA = '\n\nTipo de evento:\nFecha:\nLugar o salón:\nCantidad de invitados:';
+const wa = m => WA + encodeURIComponent(m);
+const ITEMS = [
+  { id: 'torres', g: 's', label: 'Torres de sonido', one: 'torre de sonido', many: 'torres de sonido' },
+  { id: 'parlantes', g: 's', label: 'Parlantes', one: 'parlante', many: 'parlantes' },
+  { id: 'subs', g: 's', label: 'Subwoofers', one: 'subwoofer', many: 'subwoofers' },
+  { id: 'cabezas', g: 'l', label: 'Cabezas móviles', one: 'cabeza móvil', many: 'cabezas móviles' },
+  { id: 'laser', g: 'l', label: 'Láser', one: 'láser', many: 'láseres' },
+  { id: 'humo', g: 'l', label: 'Máquina de humo', one: 'máquina de humo', many: 'máquinas de humo' },
+  { id: 'ambiente', g: 'l', label: 'Luces de ambiente', one: 'luz de ambiente', many: 'luces de ambiente' },
+];
+const EMPTY = Object.fromEntries(ITEMS.map(i => [i.id, 0]));
+const FAQS = [
+  ['¿Trabajan fuera de Rosario?', 'Por ahora trabajamos solo en Rosario.'],
+  ['¿Puedo alquilar solo el equipo, sin DJ?', 'Sí, podés alquilar sonido, luces o los dos, sin DJ.'],
+  ['¿Cuándo arman el equipo?', 'Un día antes del evento, y lo dejamos probado.'],
+  ['¿Cómo se reserva y se paga?', 'Con una seña del 25% el día de la prueba. El resto se paga el día del evento, antes de que empiece.'],
+  ['¿Cuánto cuesta?', 'Depende de lo que necesites. Armá tu pack o escribinos y te pasamos el presupuesto.'],
+  ['¿Puedo pedir canciones?', 'Sí, el DJ arma la música con vos antes del evento.'],
+];
+const BARS = Array.from({ length: 56 }, (_, i) => {
+  const t = i / 55, env = Math.sin(Math.PI * t);
+  return Math.max(10, Math.round(100 * env * (0.45 + 0.55 * Math.abs(Math.sin(i * 0.9) * Math.cos(i * 0.37)))));
+});
+const fmtDate = s => { if (!s) return ''; const [y, m, d] = s.split('-'); return `${d}/${m}/${y}`; };
+
+class Component extends DCLogic {
+  state = {
+    counts: { ...EMPTY }, dj: false, tipo: '', fecha: '', lugar: '', invitados: '',
+    isMobile: typeof window !== 'undefined' ? window.innerWidth < 900 : false,
+    menuOpen: false, packInView: false, faq: -1,
+  };
+  reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  componentDidMount() {
+    this.onResize = () => {
+      const m = window.innerWidth < 900;
+      if (m !== this.state.isMobile) this.setState({ isMobile: m, menuOpen: false });
+    };
+    window.addEventListener('resize', this.onResize);
+    const pack = document.getElementById('pack');
+    if (pack) {
+      this.packIO = new IntersectionObserver(es => this.setState({ packInView: es[0].isIntersecting }), { rootMargin: '-30% 0px -20% 0px' });
+      this.packIO.observe(pack);
+    }
+    if (!this.reduce) {
+      const els = document.querySelectorAll('[data-reveal]');
+      this.io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; this.io.unobserve(e.target); }
+      }), { threshold: 0.12 });
+      els.forEach(el => {
+        el.style.opacity = '0'; el.style.transform = 'translateY(16px)';
+        el.style.transition = 'opacity .45s ease, transform .45s ease';
+        this.io.observe(el);
+      });
+    }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    this.packIO && this.packIO.disconnect();
+    this.io && this.io.disconnect();
+  }
+
+  step(id, d) {
+    const max = this.props.maxPerItem ?? 10;
+    this.setState(s => ({ counts: { ...s.counts, [id]: Math.min(max, Math.max(0, s.counts[id] + d)) } }));
+  }
+
+  buildMessage(s) {
+    const lines = ['Hola Valentino, armé este pack en la web de GVL:', ''];
+    const grp = (g, title) => {
+      const rows = ITEMS.filter(i => i.g === g && s.counts[i.id] > 0).map(i => `- ${s.counts[i.id]} ${s.counts[i.id] === 1 ? i.one : i.many}`);
+      if (rows.length) lines.push(title + ':', ...rows, '');
+    };
+    grp('s', 'Sonido'); grp('l', 'Luces');
+    if (s.dj) lines.push('- DJ profesional', '');
+    const data = this.dataLines(s);
+    if (data.length) lines.push(...data, '');
+    lines.push('¿Me pasás disponibilidad y presupuesto?');
+    return lines.join('\n');
+  }
+  dataLines(s) {
+    const out = [];
+    if (s.tipo) out.push('Tipo de evento: ' + s.tipo);
+    if (s.fecha) out.push('Fecha: ' + fmtDate(s.fecha));
+    if (s.lugar.trim()) out.push('Lugar: ' + s.lugar.trim());
+    if (String(s.invitados).trim()) out.push('Invitados: ' + String(s.invitados).trim());
+    return out;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const max = this.props.maxPerItem ?? 10;
+    const animated = (this.props.animatedWave ?? true) && !this.reduce;
+    const mkItem = i => {
+      const c = s.counts[i.id];
+      return {
+        label: i.label, count: c,
+        dec: () => this.step(i.id, -1), inc: () => this.step(i.id, 1),
+        decDisabled: c <= 0, incDisabled: c >= max,
+        decOpacity: c <= 0 ? 0.35 : 1, incOpacity: c >= max ? 0.35 : 1,
+        countColor: c > 0 ? '#FF7A3D' : '#7D7A76',
+        decAria: `Quitar ${i.one}`, incAria: `Sumar ${i.one}`,
+      };
+    };
+    const units = ITEMS.reduce((a, i) => a + s.counts[i.id], 0);
+    const canSend = units > 0 || s.dj;
+    const unitsTxt = units ? `${units} ${units === 1 ? 'equipo' : 'equipos'}` : '';
+    const totalLabel = canSend ? [unitsTxt, s.dj ? 'DJ' : ''].filter(Boolean).join(' + ') : 'Vacío';
+    const summaryGroups = [];
+    const g = (code, title) => {
+      const lines = ITEMS.filter(i => i.g === code && s.counts[i.id] > 0).map(i => `${s.counts[i.id]} ${s.counts[i.id] === 1 ? i.one : i.many}`);
+      if (lines.length) summaryGroups.push({ title, lines });
+    };
+    g('s', 'SONIDO'); g('l', 'LUCES');
+    if (s.dj) summaryGroups.push({ title: 'DJ', lines: ['DJ profesional'] });
+    const dataLines = this.dataLines(s);
+    const showBar = s.isMobile && s.packInView;
+
+    const wave = React.createElement('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '100%', gap: 2 } },
+      BARS.map((h, i) => React.createElement('span', {
+        key: i,
+        style: {
+          flex: '1 1 0', maxWidth: 4, height: h + '%', borderRadius: 2,
+          background: i > 18 && i < 38 ? '#FF7A3D' : 'rgba(242,239,234,0.75)',
+          transformOrigin: 'center',
+          animation: animated ? `gvlWave ${(0.8 + (i % 5) * 0.14).toFixed(2)}s ease-in-out ${(-i * 0.07).toFixed(2)}s infinite alternate` : 'none',
+        },
+      })));
+
+    return {
+      isMobile: s.isMobile, isDesktop: !s.isMobile,
+      menuOpen: s.menuOpen,
+      toggleMenu: () => this.setState(p => ({ menuOpen: !p.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+      wave,
+      waGeneral: wa('Hola Valentino, estoy organizando un evento y quiero cotizar.' + DATA),
+      wa15: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un cumpleaños de 15.' + DATA),
+      waCasamiento: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un casamiento.' + DATA),
+      waPrivado: wa('Hola Valentino, quiero consultar por sonido, luces y DJ para un evento privado.' + DATA),
+      waSonido: wa('Hola Valentino, quiero consultar por alquiler de equipo de sonido.' + DATA),
+      waLuces: wa('Hola Valentino, quiero consultar por alquiler de equipo de luces.' + DATA),
+      waDJ: wa('Hola Valentino, quiero consultar por el servicio de DJ.' + DATA),
+      soundItems: ITEMS.filter(i => i.g === 's').map(mkItem),
+      lightItems: ITEMS.filter(i => i.g === 'l').map(mkItem),
+      dj: s.dj,
+      toggleDJ: () => this.setState(p => ({ dj: !p.dj })),
+      djTrack: s.dj ? '#FF7A3D' : '#2A2A30',
+      djKnob: s.dj ? '#120C08' : '#CFCBC5',
+      djKnobX: s.dj ? 24 : 0,
+      tipo: s.tipo, fecha: s.fecha, lugar: s.lugar, invitados: s.invitados,
+      setTipo: e => this.setState({ tipo: e.target.value }),
+      setFecha: e => this.setState({ fecha: e.target.value }),
+      setLugar: e => this.setState({ lugar: e.target.value }),
+      setInvitados: e => this.setState({ invitados: e.target.value }),
+      reset: () => this.setState({ counts: { ...EMPTY }, dj: false, tipo: '', fecha: '', lugar: '', invitados: '' }),
+      canSend, isEmpty: !canSend,
+      totalLabel,
+      barLabel: canSend ? 'Tu pack: ' + totalLabel : 'Tu pack está vacío',
+      summaryGroups, dataLines, hasData: dataLines.length > 0,
+      packUrl: wa(this.buildMessage(s)),
+      showBar,
+      fabBottom: showBar ? 140 : 18,
+      faqs: FAQS.map(([q, a], i) => ({
+        q, a, open: s.faq === i, rot: s.faq === i ? 45 : 0,
+        toggle: () => this.setState(p => ({ faq: p.faq === i ? -1 : i })),
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
